@@ -4,7 +4,7 @@
 <p align="center">
   <img alt="Template Logo" src="media\logos\3remove.png" width="" height="350" />
   <h1 align="center">AI Diva</h1>
-  <p align="center">A project for ... by team  </p>
+  <p align="center">A project for Internship in Service Learning by team Diva! </p>
 </p>
 <!-- the emojis are not set in stone! If you'd like you can remove them entirely or select your own from https://gist.github.com/rxaviers/7360908 you are welcome to -->
 

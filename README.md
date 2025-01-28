@@ -2,7 +2,7 @@
 <!-- This section is where you will replace the link to your transparent logo, the title of your project, and the very short desciptor of your project -->
 <!-- If you used Canva to make your icon and don't want to pay for a background remover, you can use the website https://www.remove.bg/ to do so -->
 <p align="center">
-  <img alt="Template Logo" src="media\logos\3-removebg-preview.png" width="" height="350" />
+  <img alt="Template Logo" src="media\logos\3remove.png" width="" height="350" />
   <h1 align="center">AI Diva</h1>
   <p align="center">A project for ... by team  </p>
 </p>

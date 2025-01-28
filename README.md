@@ -3,7 +3,7 @@
 <!-- If you used Canva to make your icon and don't want to pay for a background remover, you can use the website https://www.remove.bg/ to do so -->
 <p align="center">
   <img alt="Template Logo" src="media\logos\1.png" width="" height="350" />
-  <h1 align="center">AI Diva)</h1>
+  <h1 align="center">AI Diva</h1>
   <p align="center">A project for ... by team  </p>
 </p>
 <!-- the emojis are not set in stone! If you'd like you can remove them entirely or select your own from https://gist.github.com/rxaviers/7360908 you are welcome to -->

@@ -9,10 +9,10 @@
 <!-- the emojis are not set in stone! If you'd like you can remove them entirely or select your own from https://gist.github.com/rxaviers/7360908 you are welcome to -->
 
 ## :loudspeaker: About
-The objective of the workshop is 
+The objective of the workshop is to teach how to use chat bots correctly, ethically, and efficiently.
 <!-- You can look at other TAP projects if you need a better idea of how to describe your workshops objectives -->
 
-This workshop has participants do ...
+This workshop has participants will learn how clear communication is key when interacting with chatbots and how unclear instructions can lead to mistakes. They will then apply these lessons in a hands-on PB&J sandwich-making activity to reinforce the concept. 
 
 ## :bulb: Project Information
 <!-- 
@@ -31,9 +31,9 @@ You can select from a range of audiences or a single auidience. Examples:
 -->
 * <b>Difficulty Level:</b> Choose your workshop difficulty (Beginner/Intermediate/Advanced)
 * <b>Target Audience:</b> K12 - College (edit .md file to view all options presented in the markdown comments)
-* <b>Duration of Workshop:</b> How long your workshop takes (1 hour, 30 minutes, etc.) 
+* <b>Duration of Workshop:</b> How long your workshop takes (1 hour) 
 * <b>Needed Materials:</b> Computer with keyboard
-* <b>Learning Outcomes:</b> The primary goal of this project is to teach participants how to
+* <b>Learning Outcomes:</b> The primary goal of this project is to teach participants how by the end of this interactive experience, participants will have developed a strong understanding of how to effectively interact with AI, especially in terms of crafting clear and specific prompts.
 * <b>Your Main Technology</b> Name of Technology and then a brief descriptor. You will go more in depth on the technology used in a different section. 
 * [Technology Ambassador Program](https://tapggc.org/) <b>(TAP)</b> is a project-based class that provides a collaborative environment for students to work with their fellow classmates on a semester-long project using technologies of their choice. TAP strives to increase participation in IT through numerous outreach activities and workshops that are designed to showcase the creative and fun side of technology.
 <!-- Commercial Video stored in the Media folder will be linked here -->
@@ -53,7 +53,6 @@ You can select from a range of audiences or a single auidience. Examples:
 * Team Member 1
 * Team Member 2
 * Team Member 3
-* Team Member 4
 
 ## :mortar_board: Advisors
 <!-- name of the two professors overseeing your TAP class -->
@@ -62,11 +61,12 @@ You can select from a range of audiences or a single auidience. Examples:
 
 
 ## :page_with_curl: Project Description
-A more thorough description of your project. Not a full walkthrough, but describe the different sections of your project and the gist of what participants will be doing when interacting with it and what they'll learn.
+To create an interactive, engaging, and humorous chatbot experience that teaches users how to interact effectively with AI. The chatbot will have a sassy personality to keep things lighthearted while also demonstrating how important it is to communicate clearly with AI. The project will guide users through common pitfalls and challenges they may face when interacting with AI, ultimately teaching them how to write precise and clear prompts.
+
 
 ## :memo: Publications
 <!-- team members, then professors/advisors. "Name of Publication", event, month and day, year, Georgia Gwinnett College. -->
-1. Team Member, Team Member, Team Member, John Doe, Jane Doe. "A Real Fake Workshop", Fake Event, April 1, 2024, Georgia Gwinnett College.  
+1. Gabriel Sosa, My Tran, Rebecca Rahman, Cengiz Gunay, Cindy Robertson. "A Real Fake Workshop", Fake Event, February 1, 2025, Georgia Gwinnett College.  
 
 ## :open_hands: Outreach
 <i>List the outreach events your team has participated in. </i>

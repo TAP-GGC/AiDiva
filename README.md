@@ -101,15 +101,6 @@ Your repo doesn't have to have every section used below. This is just an example
 ### Getting to the game 
 [Click here to view instructions](/documents/tutorial%20materials/Getting%20to%20the%20Game.md)
 
-## Usage
-<i> Describe HOW to use your game. </i> 
-Example: 
-1. Press the Left arrow key to move to the left.
-2. Press the Right arrow key to move to the right.
-3. Press the Up arrow key to move up.
-4. Press the Down arrow key to move down.
-5. You may also replace the arrow keys with a Makey Makey. 
-
 ## Short Demo Instructions 
 [Demo Video on how to install and play our game](https://youtu.be/mA80Aa55t-U)
 
@@ -118,5 +109,7 @@ Example:
 
 [Our Game Workshop Video](https://youtu.be/Mtsre0iMStM)
 
-Workshop Completion Certificate:  https://www.canva.com/design/DAGdsilAZ8U/i2-kxl_HSPY10s8437iXSw/edit?utm_content=DAGdsilAZ8U&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton  
+Conclusion: This final section will recap the lessons learned throughout the site. Users will be encouraged to take a short quiz or challenge to test their knowledge.
+Certificate: After completing the challenges and quiz, users can download a "AI DIva" certificate as a fun way to show they’ve learned the ins and outs of interacting with AI.
 
+Workshop Completion Certificate:  https://www.canva.com/design/DAGdsilAZ8U/i2-kxl_HSPY10s8437iXSw/edit?utm_content=DAGdsilAZ8U&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton  

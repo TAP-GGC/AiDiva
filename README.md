@@ -105,7 +105,8 @@ Your repo doesn't have to have every section used below. This is just an example
 [Demo Video on how to install and play our game](https://youtu.be/mA80Aa55t-U)
 
 ## Workshop Instructions 
-[Click here to view workshop walkthrough pdf file](/documents/tutorial%20materials/Scratch%20Workshop%20Walkthrough.pdf)
+
+(https://docs.google.com/document/d/1oud0-52KviujBliOI8KtNSIPincha-RVPerYmtZTKP8/edit?usp=sharing)(/documents/tutorial%20materials/Scratch%20Workshop%20Walkthrough.pdf)
 
 [Our Game Workshop Video](https://youtu.be/Mtsre0iMStM)
 

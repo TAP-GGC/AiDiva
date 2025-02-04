@@ -42,7 +42,7 @@ You can select from a range of audiences or a single auidience. Examples:
 
 <!-- videos can also be dragged and dropped into markdown files if you want them embedded -->
 
-## :pencil2: Team: Diva
+## :pencil2: Team: A.I. Diva
 
 <!-- Use the team photo of your choice once youve uploaded it to the team photo folder within the media folder -->
 <img alt="art featuring batman, wonder woman, and superman" src = "media/team photos/Team Photo.JPG" width="" height="300">
@@ -130,4 +130,5 @@ Example:
 
 [Our Game Workshop Video](https://youtu.be/Mtsre0iMStM)
 
-Workshop Completion Certificate: https://www.canva.com/design/DAGdsilAZ8U/i2-kxl_HSPY10s8437iXSw/edit?utm_content=DAGdsilAZ8U&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton 
+Workshop Completion Certificate:  https://www.canva.com/design/DAGdsilAZ8U/i2-kxl_HSPY10s8437iXSw/edit?utm_content=DAGdsilAZ8U&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton  
+

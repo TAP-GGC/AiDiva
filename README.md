@@ -2,7 +2,7 @@
 <!-- This section is where you will replace the link to your transparent logo, the title of your project, and the very short desciptor of your project -->
 <!-- If you used Canva to make your icon and don't want to pay for a background remover, you can use the website https://www.remove.bg/ to do so -->
 <p align="center">
-  <img alt="Template Logo" src="media\logos\3remove.png" width="" height="350" />
+  <img alt="Template Logo" src="media\logos\3remove.png" width="350" height="350" />
   <h1 align="center">Ai Diva</h1>
   <p align="center">A project for Internship in Service Learning by team Diva! </p>
 </p>
@@ -82,31 +82,19 @@ Example:
 If you're interested in more workshops that utilize Scratch, check out [Space Mechanic](https://github.com/TAP-GGC/NinjaTurtles)!
 
 ## :computer: Technology
-<i> Replace Scratch with whatever technology you're using and make sure to have a logo of that technology uploaded to the technology folder within the media folder. </i>
+<i> Open A.I. </i>
 <!-- be sure to use the alt text feature in case anybody viewing your repo is using  screen reader! you want your workshop to be as accessible as possible -->
 <p align="center">
-  <img alt="Scratch Logo" src = "media/technology/scratch logo.png" width="200" height="200"/>
+  <img alt="opena.i.png" src = "media/technology/opena.i.png" width="300" height="200"/>
 </p>
 
-* [Scratch](https://scratch.mit.edu/) is a block-based programming language developed by the MIT Media Lab as an education tool for children to learn computing in a fun and interactive way.
-* Scratch has drag-and-drop interfaces. Unlike text-based programming language like Java or C where you physically type every line of code, in Scratch, you can drag and drop pre-made codes and organize them into an algorithm. It's like solving a jigsaw puzzle!
-* Explain why your team chose this technology for this workshop.
-
-<p align="center">
-<img src = "media/technology/block-based language.png" width ="400" height="200">
-</p>
+* OpenAI is a company that researches and develops artificial intelligence (AI) with the goal of making it benefit all of humanity. OpenAI's research focuses on machine learning, deep learning, and reinforcement learning. OpenAI conducts research into the boundaries of AI capabilities, including natural language processing, computer vision, and robotics. Operator is an AI agent that can perform repetitive browser tasks, such as filling out forms and ordering groceries. 
 
 ## Project Setup/Installation 
 <i> This section is dedicated to linking to .md files in your documents/tutorial/ folder that will contain instructions on installation
 
 Your repo doesn't have to have every section used below. This is just an example so you can get an idea of what your own repo should look like</i>
 
-### Opening a blank Scratch page 
-[Click here to view instructions](/documents/tutorial%20materials/Opening%20a%20blank%20Scratch%20page.md)
-
-[Video with Scratch instructions](https://youtu.be/v-GUbj7DMEE)
-
-<!-- if your project uses scratch, you can reuse any of these instructions (be sure to include CS First alternatives) -->
 ## CS First Installation Walkthrough
 [Click here to view instructions](/documents/tutorial%20materials/CS%20FIRST/CS%20First%20Walkthrough.md)
 

@@ -64,7 +64,7 @@ You can select from a range of audiences or a single auidience. Examples:
 To create an interactive, engaging, and humorous chatbot experience that teaches users how to interact effectively with AI. The chatbot will have a sassy personality to keep things lighthearted while also demonstrating how important it is to communicate clearly with AI. The project will guide users through common pitfalls and challenges they may face when interacting with AI, ultimately teaching them how to write precise and clear prompts.
 
 
-## :memo: TeamPhoto.webp Publications
+## :memo: Publications
 <!-- team members, then professors/advisors. "Name of Publication", event, month and day, year, Georgia Gwinnett College. -->
 1. Gabriel Sosa, My Tran, Rebecca Rahman, Cengiz Gunay, Cindy Robertson. "A Real Fake Workshop", Fake Event, February 1, 2025, Georgia Gwinnett College.  
 

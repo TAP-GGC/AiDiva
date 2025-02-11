@@ -45,14 +45,14 @@ You can select from a range of audiences or a single auidience. Examples:
 ## :pencil2: Team: A.I. Diva
 
 <!-- Use the team photo of your choice once youve uploaded it to the team photo folder within the media folder -->
-<img alt="art featuring batman, wonder woman, and superman" src = "media/team photos/TeamPhoto.webp " width="" height="300">
+<img alt="art featuring Rebecca, My, and Gabe" src = "media/team photos/TeamPhoto.webp " width="" height="300">
 
-> (From left to right: Batman,  Wonder Woman, Superman.)
+> (From left to right: Rebecca, My, Gabe.)
 <!-- replace with full names of your team members -->
 
-* Team Member 1
-* Team Member 2
-* Team Member 3
+* Rebecca Rahman
+* Gabriel Sosa
+* My Tran
 
 ## :mortar_board: Advisors
 <!-- name of the two professors overseeing your TAP class -->

@@ -1,0 +1,185 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+    <title>MiniGame Chat - Ai Diva</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <link rel="stylesheet" href="assets/css/main.css" />
+    <noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+</head>
+<body class="is-preload">
+<!-- Wrapper -->
+<div id="wrapper">
+
+    <!-- Header -->
+    <header id="header">
+        <div class="logo">
+            <img src="images/aidivalogo.png" alt="Custom Icon">
+        </div>
+        <div class="content">
+            <div class="inner">
+                <h1>20 Questions</h1>
+                <p>The Ai will think of something and you have to ask if questions and correctly guess what it is.</p>
+                <!-- Chat Wrapper (Contains Chat & Input) -->
+                <div id="chat-wrapper">
+                    <!-- Chat Container -->
+                    <div id="chat-container">
+                        <div id="messages"></div>
+                    </div>
+
+                    <!-- Input Container (Fixed at Bottom of Chat Box) -->
+                    <div id="input-container">
+                        <label for="user-input"></label><input type="text" id="user-input" placeholder="Type a message...">
+                        <button onclick="sendMessage()">Send</button>
+                        <button id="reset-button" onclick="resetGame()">Reset</button>
+                        <button id="hint-button" onclick="hintGame()">Hint</button>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+            </ul>
+        </nav>
+    </header>
+    <!-- Footer -->
+    <footer id="footer">
+        <p class="copyright"></p>
+    </footer>
+
+</div>
+
+<!-- BG -->
+<div id="bg"></div>
+
+<!-- Scripts -->
+<script src="assets/js/jquery.min.js"></script>
+<script src="assets/js/browser.min.js"></script>
+<script src="assets/js/breakpoints.min.js"></script>
+<script src="assets/js/util.js"></script>
+<script src="assets/js/main.js"></script>
+<script>
+    // Function to send the message
+    // Function to send the message
+    async function sendMessage() {
+        const inputElem = document.getElementById("user-input");
+        const sendButton = document.querySelector("#input-container button");
+        const messagesDiv = document.getElementById("messages");
+
+        const userInput = inputElem.value.trim();
+        if (!userInput) return; // Do nothing if input is empty
+
+        // Disable input and send button while waiting for response
+        inputElem.disabled = true;
+        sendButton.disabled = true;
+
+        // Clear input field
+        inputElem.value = "";
+
+        // Append user's message to chat
+        messagesDiv.innerHTML += `<div class="user-message">${userInput}</div>`;
+
+        // Show "AI is thinking..." message
+        const loadingMessage = document.createElement("div");
+        loadingMessage.className = "ai-message";
+        loadingMessage.textContent = "🤖 Ai Diva is thinking...";
+        messagesDiv.appendChild(loadingMessage);
+
+        try {
+            const response = await fetch("http://127.0.0.1:5001/api/minigame", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ prompt: userInput })
+            });
+
+            const data = await response.json();
+
+            // Remove the "AI is thinking..." message
+            messagesDiv.removeChild(loadingMessage);
+
+            // Append chatbot's response
+            messagesDiv.innerHTML += `<div class="ai-message">${data.response}</div>`;
+
+            // If game is over, show reset prompt
+            if (data.game_over) {
+                messagesDiv.innerHTML += `<div class="ai-message">Game Over! Click "Reset Game" to start again.</div>`;
+            }
+        } catch (error) {
+            messagesDiv.innerHTML += `<div class="ai-message">Error: Unable to get a response.</div>`;
+        } finally {
+            // Re-enable input and send button after response
+            inputElem.disabled = false;
+            sendButton.disabled = false;
+            inputElem.focus();
+        }
+    }
+
+
+    // Function to reset the game
+    async function resetGame() {
+        const messagesDiv = document.getElementById("messages");
+
+        try {
+            // Send reset request to backend
+            await fetch("http://127.0.0.1:5001/api/reset", { method: "POST" });
+
+            // Clear chat history on frontend
+            messagesDiv.innerHTML = `<div class="ai-message">Game reset! A new object has been chosen. Let's play again!</div>`;
+        } catch (error) {
+            messagesDiv.innerHTML += `<div class="ai-message">Error: Unable to reset the game.</div>`;
+        }
+    }
+
+    async function hintGame(){
+        const inputElem = document.getElementById("user-input");
+        const sendButton = document.querySelector("#input-container button");
+        const messagesDiv = document.getElementById("messages");
+
+        // Disable input and send button while waiting for response
+        inputElem.disabled = true;
+        sendButton.disabled = true;
+
+
+        // Show "AI is thinking..." message
+        const loadingMessage = document.createElement("div");
+        loadingMessage.className = "ai-message";
+        loadingMessage.textContent = "🤖 Ai Diva is thinking...";
+        messagesDiv.appendChild(loadingMessage);
+
+        try{
+            const response = await fetch("http://127.0.0.1:5001/api/hint", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+            });
+            const data = await response.json();
+
+            //removes loading message
+            messagesDiv.removeChild(loadingMessage);
+            //displays messages from backend
+            messagesDiv.innerHTML += `<div class="ai-message">${data.response}</div>`;
+        } catch (error) {
+            messagesDiv.innerHTML += `<div class="ai-message">Error: Unable to provide a hint</div>`;
+        } finally {
+            // Re-enable input and send button after response
+            inputElem.disabled = false;
+            sendButton.disabled = false;
+            inputElem.focus();
+        }
+    }
+
+    document.getElementById("user-input").addEventListener("keydown", function(event) {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            sendMessage();
+        }
+    });
+
+</script>
+</body>
+</html>
+#export FLASK_APP=minigame.py
+#flask run --port=5001
+

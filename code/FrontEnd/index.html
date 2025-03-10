@@ -1,0 +1,141 @@
+<!DOCTYPE HTML>
+<html lang="en">
+	<head>
+		<title>Dimension by HTML5 UP</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+	</head>
+	<body class="is-preload">
+
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Header -->
+					<header id="header">
+						<div class="logo">
+							<img src="images/aidivalogo.png" alt="Custom Icon">
+						</div>
+						<div class="content">
+							<div class="inner">
+								<h1>Ai Diva</h1>
+								<p>Learn how to use Ai</p>
+								<!-- Chat Wrapper (Contains Chat & Input) -->
+								<div id="chat-wrapper">
+									<!-- Chat Container -->
+									<div id="chat-container">
+										<div id="messages"></div>
+									</div>
+
+									<!-- Input Container (Fixed at Bottom of Chat Box) -->
+									<div id="input-container">
+										<label for="user-input"></label><input type="text" id="user-input" placeholder="Type a message...">
+										<button onclick="sendMessage()">Send</button>
+									</div>
+
+								</div>
+
+							</div>
+						</div>
+
+						<nav>
+							<ul>
+								<li><a href="minigame.html">MiniGame</a></li>
+							</ul>
+						</nav>
+					</header>
+				<!-- Footer -->
+					<footer id="footer">
+						<p class="copyright"></p>
+					</footer>
+
+			</div>
+
+		<!-- BG -->
+			<div id="bg"></div>
+
+		<!-- Scripts -->
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/browser.min.js"></script>
+			<script src="assets/js/breakpoints.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<script src="assets/js/main.js"></script>
+		<script>
+			// Function to send the message
+			async function sendMessage() {
+				const inputElem = document.getElementById("user-input");
+				const sendButton = document.querySelector("#input-container button");
+
+
+				const userInput = inputElem.value.trim();
+				if (!userInput) return; // Do nothing if input is empty
+
+				// Disable input and send button while waiting for response
+				inputElem.disabled = true;
+				sendButton.disabled = true;
+
+				// Clear the input field
+				inputElem.value = "";
+
+				// Get the chat container
+				const messagesDiv = document.getElementById("messages");
+
+				// Append the user's message using insertAdjacentHTML
+				messagesDiv.insertAdjacentHTML('beforeend', `<div class="user-message">${userInput}</div>`);
+
+				// Create and display a loading image element
+				const loadingElem = document.createElement("div");
+				loadingElem.id = "loading";
+				// You can style this element via CSS or inline:
+				loadingElem.innerHTML = `<img src="images/loading.gif" alt="Loading..." />`;
+				messagesDiv.appendChild(loadingElem);
+
+				// Send the user's message to the Flask backend using fetch
+				try {
+					const response = await fetch("http://127.0.0.1:5000/api/chat", {
+						method: "POST",
+						headers: {
+							"Content-Type": "application/json"
+						},
+						body: JSON.stringify({prompt: userInput})
+
+					});
+
+					if (!response.ok) {
+						console.error("Server responded with status", response.status);
+						throw new Error("Network response was not ok");
+					}
+
+					const data = await response.json();
+
+					// Append the backend's response using insertAdjacentHTML
+					messagesDiv.insertAdjacentHTML('beforeend', `<div class="ai-message">${data.response}</div>`);
+					console.log("Remaining words:", data.remaining_words);
+				} catch (error) {
+					console.error("Error:", error);
+					messagesDiv.innerHTML += `<div class="ai-message">Error: Unable to get a response.</div>`;
+				} finally {
+					// Remove the loading element if it's still attached
+					if (messagesDiv.contains(loadingElem)) {
+						messagesDiv.removeChild(loadingElem);
+						inputElem.disabled = false;
+						sendButton.disabled = false;
+						inputElem.focus();
+					}
+				}
+			}
+
+			// Add event listener to handle Enter key on the input field
+			document.getElementById("user-input").addEventListener("keydown", function(event) {
+				if (event.key === "Enter") {
+					event.preventDefault(); // Prevent default behavior, e.g., form submission
+					sendMessage();
+				}
+
+			});
+		</script>
+
+
+	</body>
+</html>

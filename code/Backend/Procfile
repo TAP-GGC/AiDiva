@@ -1,1 +1,1 @@
-web: gunicorn backend.minigame.py
+web: gunicorn code.backend.minigame.py

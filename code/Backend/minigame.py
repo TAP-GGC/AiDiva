@@ -20,8 +20,7 @@ nlp = spacy.load("en_core_web_sm")
 nltk.download("punkt")
 
 app = Flask(__name__)
-CORS(app, origins=["https://tap-ggc.github.io/AiDiva/minigame.html"])
-
+CORS(app, resources={r"/api/*": {"origins": "*"}})
 # Set up logging
 logging.basicConfig(level=logging.INFO)
 

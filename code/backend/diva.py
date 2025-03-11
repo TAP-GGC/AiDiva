@@ -14,7 +14,6 @@ logging.basicConfig(level=logging.INFO)
 # Set your OpenAI API key (replace with your actual key)
 load_dotenv()
 client = OpenAI(api_key=os.getenv("DIVA_API_KEY"))
-print(os.getenv("DIVA_API_KEY"))
 
 # System message defines the assistant's personality
 system_message = """

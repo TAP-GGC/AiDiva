@@ -1,1 +1,1 @@
-web: gunicorn backend.minigame:app
+web: gunicorn backend.minigame:app --chdir code

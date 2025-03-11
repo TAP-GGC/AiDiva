@@ -6,15 +6,13 @@ from openai import OpenAI, api_key
 from dotenv import load_dotenv
 
 app = Flask(__name__)
-CORS(app)  # Enable CORS for all routes (optional)
-
+CORS(app, resources={r"/api/*": {"origins": "*"}})
 # Set up logging
 logging.basicConfig(level=logging.INFO)
 
 # Set your OpenAI API key (replace with your actual key)
 load_dotenv()
 client = OpenAI(api_key=os.getenv("DIVA_API_KEY"))
-print(os.getenv("DIVA_API_KEY"))
 
 # System message defines the assistant's personality
 system_message = """
@@ -88,7 +86,8 @@ def chat():
         "remaining_words": max(TOTAL_WORD_LIMIT - word_count, 0)
     })
 
-if __name__ == "__main__":
-    app.run(debug=True, port=5000)
+if __name__ == '__main__':
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port)  # Running on port 5001 to avoid conflicts with diva.py
 #export FLASK_APP=diva.py
 #export FLASK_ENV=development

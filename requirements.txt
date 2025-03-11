@@ -39,6 +39,7 @@ preshed==3.0.9
 pydantic==2.10.6
 pydantic_core==2.27.2
 Pygments==2.19.1
+python-dotenv
 regex==2024.11.6
 requests==2.32.3
 rich==13.9.4

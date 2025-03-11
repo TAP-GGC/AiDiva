@@ -89,7 +89,7 @@
         messagesDiv.appendChild(loadingMessage);
 
         try {
-            const response = await fetch("https://ai-diva-42bed2958d91.herokuapp.com", {
+            const response = await fetch("https://ai-diva-42bed2958d91.herokuapp.com/", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ prompt: userInput })
@@ -124,7 +124,7 @@
 
         try {
             // Send reset request to backend
-            await fetch("https://ai-diva-42bed2958d91.herokuapp.com", { method: "POST" });
+            await fetch("https://ai-diva-42bed2958d91.herokuapp.com/", { method: "POST" });
 
             // Clear chat history on frontend
             messagesDiv.innerHTML = `<div class="ai-message">Game reset! A new object has been chosen. Let's play again!</div>`;
@@ -150,7 +150,7 @@
         messagesDiv.appendChild(loadingMessage);
 
         try{
-            const response = await fetch("https://ai-diva-42bed2958d91.herokuapp.com", {
+            const response = await fetch("https://ai-diva-42bed2958d91.herokuapp.com/", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
             });

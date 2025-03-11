@@ -17,7 +17,7 @@ nlp = spacy.load("en_core_web_sm")
 nltk.download("punkt")
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, origins=["https://tap-ggc.github.io/AiDiva/minigame.html"])
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -240,8 +240,9 @@ def reset():
 def hint():
     return generate_hint()
 
-if __name__ == "__main__":
-    app.run(debug=True, port=5001)  # Running on port 5001 to avoid conflicts with diva.py
+if __name__ == '__main__':
+    port = int(os.environ.get('PORT', 5001))
+    app.run(host='0.0.0.0', port=port)  # Running on port 5001 to avoid conflicts with diva.py
 
 #FLASK_APP=minigame.py
 #flask run --port=5001

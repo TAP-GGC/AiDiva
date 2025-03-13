@@ -28,12 +28,21 @@ client = OpenAI(api_key=os.getenv("MINIGAME_API_KEY"))
 app = Flask(__name__)
 CORS(app, resources={r"/api/*": {"origins": "*"}}, supports_credentials=True)
 
+# If using Flask
+@app.after_request
+def after_request(response):
+    response.headers.add('Access-Control-Allow-Origin', 'https://tap-ggc.github.io/AiDiva/minigame.html')
+    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+    response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
+    response.headers.add('Access-Control-Allow-Credentials', 'true')
+    return response
+
 # Set a strong secret key for session encryption
 app.secret_key = os.getenv("FLASK_SECRET_KEY", "default_secret_key_for_dev")
 app.config['SESSION_TYPE'] = 'filesystem'
-app.config['SESSION_COOKIE_SECURE'] = False  # Set to True in production with HTTPS
+app.config['SESSION_COOKIE_SECURE'] = True  # Set to True in production with HTTPS
 app.config['SESSION_COOKIE_HTTPONLY'] = True
-app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'  # Use 'None' for cross-site requests with HTTPS
+app.config['SESSION_COOKIE_SAMESITE'] = 'None'  # Use 'None' for cross-site requests with HTTPS
 
 #####################################
 # 20 Questions Game Configuration  #

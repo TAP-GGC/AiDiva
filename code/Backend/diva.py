@@ -54,8 +54,8 @@ def reset_game():
     chat_history_game = [{"role": "system", "content": system_message_minigame}]
 
     # Update session with the new game state
-    session['question_count'] = question_count
-    session['secret_object'] = secret_object
+    session['question_count'] = 0
+    session['secret_object'] = generate_secret_object()
     session['chat_history_game'] = chat_history_game
 
 

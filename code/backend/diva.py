@@ -48,6 +48,8 @@ MAX_QUESTIONS = 20
 chat_history_game = [{"role": "system", "content": system_message_minigame}]
 
 def reset_game():
+    global question_count, secret_object, chat_history_game  # Declare globals
+
     # Generate new game state
     question_count = 0
     secret_object = generate_secret_object()
@@ -55,7 +57,7 @@ def reset_game():
 
     # Update session with the new game state
     session['question_count'] = 0
-    session['secret_object'] = generate_secret_object()
+    session['secret_object'] = secret_object
     session['chat_history_game'] = chat_history_game
 
 

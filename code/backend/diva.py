@@ -48,11 +48,6 @@ MAX_QUESTIONS = 20
 chat_history_game = [{"role": "system", "content": system_message_minigame}]
 
 def reset_game():
-    # Generate new game state
-    question_count = 0
-    secret_object = generate_secret_object()
-    chat_history_game = [{"role": "system", "content": system_message_minigame}]
-
     # Update session with the new game state
     session['question_count'] = question_count
     session['secret_object'] = secret_object
@@ -60,6 +55,7 @@ def reset_game():
 
     logging.info(f"New secret object chosen: {secret_object}")
     return jsonify({"message": "Game has been reset! A new object has been chosen."})
+
 
 def generate_secret_object():
     """Generates a secret object using the OpenAI API."""

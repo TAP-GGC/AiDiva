@@ -170,7 +170,12 @@ def minigame():
 
     guessed_object = user_prompt.replace("is it ", "").replace("i guess ", "").replace("my guess is ", "").strip()
 
-    if secret_object and secret_object.lower() in user_prompt:
+    # If the guess is incorrect but structured as a guess, respond with a denial
+    if user_prompt.startswith("is it ") or user_prompt.startswith("i guess ") or user_prompt.startswith("my guess is "):
+        response = "Nope, that's not it! Keep trying, detective. 😏"
+        return jsonify({"response": response, "game_over": False})
+
+    if secret_object or secret_object.lower() in user_prompt:
         response = f"🎉 Yes! You got it right, it's {secret_object}!"
         # Optionally, clear the game state
         session.pop('secret_object', None)

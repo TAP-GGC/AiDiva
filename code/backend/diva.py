@@ -245,7 +245,9 @@ def minigame():
             ]
         )
         response = chat_completion.choices[0].message.content
+        logging.info(f"API returned: {response}")
         chat_history_game.append({"role": "assistant", "content": response})
+
     except Exception as e:
         logging.error(f"OpenAI API error: {e}")
         return jsonify({"response": "Oops! Something went wrong. Try again.", "game_over": False})

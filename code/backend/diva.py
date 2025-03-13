@@ -1,16 +1,13 @@
 import logging
 import os
 import random
-import re
+
+import nltk
+import spacy.cli
 from dotenv import load_dotenv
 from flask import Flask, request, jsonify, session
 from flask_cors import CORS
-from flask_session import Session
 from openai import OpenAI
-import spacy
-import spacy.cli
-import nltk
-from nltk.tokenize import word_tokenize
 
 # Download and load NLP models
 spacy.cli.download("en_core_web_sm")
@@ -24,13 +21,12 @@ logging.basicConfig(level=logging.INFO)
 load_dotenv()
 
 # Initialize OpenAI client (choose the appropriate environment variable)
-client = OpenAI(api_key=os.getenv("MINIGAME_API_KEY"))  # or use DIVA_API_KEY if needed
+client = OpenAI(api_key=os.getenv("MINIGAME_API_KEY"))
 
 # Create Flask app and enable CORS
 app = Flask(__name__)
 CORS(app, resources={r"/api/*": {"origins": "*"}})
 
-# Set the secret key from an environment variable.
 app.secret_key = os.getenv("FLASK_SECRET_KEY", "default_secret_key_for_dev")
 
 #####################################
@@ -156,6 +152,9 @@ def apply_word_limit(text, remaining_words):
 @app.route("/api/minigame", methods=["POST"])
 def minigame():
     global question_count, secret_object, chat_history_game
+    question_count = session.get('question_count', 0)
+    secret_object = session.get('secret_object', None)
+    chat_history_game = session.get('chat_history_game', [])
     data = request.get_json()
     user_prompt = data.get("prompt", "").strip().lower()
     if not user_prompt:
@@ -171,18 +170,23 @@ def minigame():
 
     guessed_object = user_prompt.replace("is it ", "").replace("i guess ", "").replace("my guess is ", "").strip()
 
-    if secret_object.lower() in guessed_object:
-        response = f"🎉 Yes! You got it right, it's {secret_object}! You must be psychic! 😏"
-        logging.info(f"Correct guess: {secret_object}")
-        reset_game()
+    if secret_object and secret_object.lower() in user_prompt:
+        response = f"🎉 Yes! You got it right, it's {secret_object}!"
+        # Optionally, clear the game state
+        session.pop('secret_object', None)
+        session.pop('question_count', None)
+        session.pop('chat_history_game', None)
         return jsonify({"response": response, "game_over": True})
+
 
     if user_prompt.startswith("is it ") or user_prompt.startswith("i guess ") or user_prompt.startswith("my guess is "):
         response = "Nope, that's not it! Keep trying, detective. 😏"
         return jsonify({"response": response, "game_over": False})
 
     question_count += 1
+    session['question_count'] = question_count
     chat_history_game.append({"role": "user", "content": user_prompt})
+    session['chat_history_game'] = chat_history_game
 
     try:
         chat_completion = client.chat.completions.create(

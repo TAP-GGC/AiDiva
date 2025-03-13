@@ -104,6 +104,7 @@ def generate_hint():
     except Exception as e:
         logging.error(f"OpenAI API error: {e}")
         return jsonify({"response": "Oops! Something went wrong. Try again.", "game_over": False})
+
     return jsonify({
         "response": response,
     })

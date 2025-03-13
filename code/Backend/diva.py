@@ -48,12 +48,14 @@ MAX_QUESTIONS = 20
 chat_history_game = [{"role": "system", "content": system_message_minigame}]
 
 def reset_game():
-    """Resets the game for a new session."""
-    global question_count, secret_object, chat_history_game
-    question_count = 0
-    secret_object = generate_secret_object()
-    chat_history_game = [{"role": "system","content": system_message_minigame}]
+    # Update session with the new game state
+    session['question_count'] = question_count
+    session['secret_object'] = secret_object
+    session['chat_history_game'] = chat_history_game
+
     logging.info(f"New secret object chosen: {secret_object}")
+    return jsonify({"message": "Game has been reset! A new object has been chosen."})
+
 
 def generate_secret_object():
     """Generates a secret object using the OpenAI API."""
@@ -174,12 +176,13 @@ def minigame():
         return jsonify({"error": "Game not started. Please start a new game."}), 400
 
 
-    if secret_object.lower() in guessed_object:
+    # Check if the guess is correct
+    if secret_object and secret_object.lower() in guessed_object:
         response = f"🎉 Yes! You got it right, it's {secret_object}!"
-        # # Optionally, clear the game state
-        # session.pop('secret_object', None)
-        # session.pop('question_count', None)
-        # session.pop('chat_history_game', None)
+        # Optionally clear the game state if the game is over
+        session.pop('secret_object', None)
+        session.pop('question_count', None)
+        session.pop('chat_history_game', None)
         return jsonify({"response": response, "game_over": True})
 
 

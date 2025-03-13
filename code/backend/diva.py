@@ -170,7 +170,7 @@ def minigame():
 
     guessed_object = user_prompt.replace("is it ", "").replace("i guess ", "").replace("my guess is ", "").strip()
 
-    if secret_object or secret_object.lower() in user_prompt:
+    if secret_object.lower() in guessed_object:
         response = f"🎉 Yes! You got it right, it's {secret_object}!"
         # Optionally, clear the game state
         session.pop('secret_object', None)

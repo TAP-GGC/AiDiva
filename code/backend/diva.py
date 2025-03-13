@@ -26,8 +26,7 @@ client = OpenAI(api_key=os.getenv("MINIGAME_API_KEY"))
 
 # Create Flask app and enable CORS with credentials support
 app = Flask(__name__)
-CORS(app, resources={r"/api/*": {"origins": "*"}}, supports_credentials=True)
-
+CORS(app, resources={r"/api/*": {"origins": ["https://tap-ggc.github.io", "http://localhost:5000"]}}, supports_credentials=True)
 # If using Flask
 @app.after_request
 def after_request(response):

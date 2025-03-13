@@ -160,10 +160,14 @@ def minigame():
     question_count = session.get('question_count', 0)
     secret_object = session.get('secret_object', None)
     chat_history_game = session.get('chat_history_game', [])
+
     data = request.get_json()
     user_prompt = data.get("prompt", "").strip().lower()
     if not user_prompt:
         return jsonify({"error": "No question provided."}), 400
+
+    if secret_object is None:
+        return jsonify({"error": "Game not started. Please reset/start a new game."}), 400
 
     if question_count >= MAX_QUESTIONS:
         return jsonify({"response": "You've used all 20 questions! Now, guess what I'm thinking of.", "game_over": True})
@@ -175,10 +179,6 @@ def minigame():
 
     guessed_object = user_prompt.replace("is it ", "").replace("i guess ", "").replace("my guess is ", "").strip()
 
-    if secret_object is None:
-        return jsonify({"error": "Game not started. Please start a new game."}), 400
-
-
     # Check if the guess is correct
     if secret_object and secret_object.lower() in guessed_object:
         response = f"🎉 Yes! You got it right, it's {secret_object}!"
@@ -187,11 +187,6 @@ def minigame():
         session.pop('question_count', None)
         session.pop('chat_history_game', None)
         return jsonify({"response": response, "game_over": True})
-
-
-    if user_prompt.startswith("is it ") or user_prompt.startswith("i guess ") or user_prompt.startswith("my guess is "):
-        response = "Nope, that's not it! Keep trying, detective. 😏"
-        return jsonify({"response": response, "game_over": False})
 
     question_count += 1
     session['question_count'] = question_count

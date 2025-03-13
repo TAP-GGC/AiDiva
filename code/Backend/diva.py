@@ -2,7 +2,7 @@ import logging
 import os
 import random
 
-import nltk.data
+import nltk
 import spacy.cli
 from dotenv import load_dotenv
 from flask import Flask, request, jsonify, session
@@ -12,10 +12,7 @@ from openai import OpenAI
 # Download and load NLP models
 spacy.cli.download("en_core_web_sm")
 nlp = spacy.load("en_core_web_sm")
-try:
-    nltk.data.find("tokenizers/punkt")
-except LookupError:
-    nltk.download("punkt")
+nltk.download("punkt")
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -248,7 +245,9 @@ def minigame():
             ]
         )
         response = chat_completion.choices[0].message.content
+        logging.info(f"API returned: {response}")
         chat_history_game.append({"role": "assistant", "content": response})
+
     except Exception as e:
         logging.error(f"OpenAI API error: {e}")
         return jsonify({"response": "Oops! Something went wrong. Try again.", "game_over": False})

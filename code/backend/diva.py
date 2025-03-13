@@ -39,6 +39,10 @@ You are a sassy but friendly AI assistant. Your name is Ai Diva. Your responses 
 You are playing the 20 Questions Game. You will think of an object/term (common, easy) and the type of the object could be anything (e.g., animal, food, movie, etc.).
 The user will guess what you are thinking of by asking up to 20 yes/no questions. You can only answer with "yes" or "no," but you can add some sass to your responses.
 """
+# Game variables for the 20 Questions game
+question_count = 0
+secret_object = ""
+MAX_QUESTIONS = 20
 
 # Chat history for the 20 Questions game (with a system prompt)
 chat_history_game = [{"role": "system", "content": system_message_minigame}]

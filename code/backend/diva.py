@@ -123,8 +123,6 @@ def is_question(user_input):
             return True
     return False
 
-# Initialize the game when the app starts
-reset_game()
 
 #############################
 # General Chat Configuration#
@@ -159,6 +157,9 @@ def apply_word_limit(text, remaining_words):
 # 20 Questions Game Endpoint
 @app.route("/api/minigame", methods=["POST"])
 def minigame():
+    if 'secret_object' not in session:
+        reset_game()  # This call now happens within a request context
+    # ... rest of your minigame code ...
     global question_count, secret_object, chat_history_game
     question_count = session.get('question_count', 0)
     secret_object = session.get('secret_object', None)

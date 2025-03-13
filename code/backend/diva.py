@@ -170,12 +170,16 @@ def minigame():
 
     guessed_object = user_prompt.replace("is it ", "").replace("i guess ", "").replace("my guess is ", "").strip()
 
+    if secret_object is None:
+        return jsonify({"error": "Game not started. Please start a new game."}), 400
+
+
     if secret_object.lower() in guessed_object:
         response = f"🎉 Yes! You got it right, it's {secret_object}!"
-        # Optionally, clear the game state
-        session.pop('secret_object', None)
-        session.pop('question_count', None)
-        session.pop('chat_history_game', None)
+        # # Optionally, clear the game state
+        # session.pop('secret_object', None)
+        # session.pop('question_count', None)
+        # session.pop('chat_history_game', None)
         return jsonify({"response": response, "game_over": True})
 
 

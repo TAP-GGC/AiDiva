@@ -1,2 +1,1 @@
-web: gunicorn backend.minigame:app --chdir code
-web: gunicorn backend.diva:app --chdir code
+web: python -m nltk.downloader punkt && gunicorn backend.diva:app --chdir code

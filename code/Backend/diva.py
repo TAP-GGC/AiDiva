@@ -1,6 +1,7 @@
 import logging
 import os
 import random
+import json
 
 import nltk
 import spacy.cli
@@ -23,11 +24,16 @@ load_dotenv()
 # Initialize OpenAI client (choose the appropriate environment variable)
 client = OpenAI(api_key=os.getenv("MINIGAME_API_KEY"))
 
-# Create Flask app and enable CORS
+# Create Flask app and enable CORS with credentials support
 app = Flask(__name__)
-CORS(app, resources={r"/api/*": {"origins": "*"}})
+CORS(app, resources={r"/api/*": {"origins": "*"}}, supports_credentials=True)
 
+# Set a strong secret key for session encryption
 app.secret_key = os.getenv("FLASK_SECRET_KEY", "default_secret_key_for_dev")
+app.config['SESSION_TYPE'] = 'filesystem'
+app.config['SESSION_COOKIE_SECURE'] = False  # Set to True in production with HTTPS
+app.config['SESSION_COOKIE_HTTPONLY'] = True
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'  # Use 'None' for cross-site requests with HTTPS
 
 #####################################
 # 20 Questions Game Configuration  #
@@ -40,28 +46,27 @@ You are playing the 20 Questions Game. You will think of an object/term (common,
 The user will guess what you are thinking of by asking up to 20 yes/no questions. You can only answer with "yes" or "no," but you can add some sass to your responses.
 """
 # Game variables for the 20 Questions game
-question_count = 0
-secret_object = ""
 MAX_QUESTIONS = 20
 
-# Chat history for the 20 Questions game (with a system prompt)
-chat_history_game = [{"role": "system", "content": system_message_minigame}]
+# Debug function to help with troubleshooting
+def debug_session():
+    logging.info(f"SESSION DATA: {json.dumps({k: str(v) for k, v in session.items()})}")
 
 def reset_game():
-    global question_count, secret_object, chat_history_game  # Declare globals
-
     # Generate new game state
     question_count = 0
     secret_object = generate_secret_object()
     chat_history_game = [{"role": "system", "content": system_message_minigame}]
 
     # Update session with the new game state
-    session['question_count'] = 0
+    session['question_count'] = question_count
     session['secret_object'] = secret_object
     session['chat_history_game'] = chat_history_game
+    session.modified = True  # Important: Mark the session as modified
 
+    logging.info(f"Game reset! New secret object chosen: {secret_object}")
+    debug_session()  # Log session data for debugging
 
-    logging.info(f"New secret object chosen: {secret_object}")
     return jsonify({"message": "Game has been reset! A new object has been chosen."})
 
 
@@ -76,7 +81,7 @@ def generate_secret_object():
                         "Think of a specific, common object that people can guess in 20 Questions. "
                         "Examples: cat, pizza, Eiffel Tower, bicycle. "
                         "It must be a single, specific noun (1-2 words) that can be guessed with yes/no questions. "
-                        "Do not repeat objects"
+                        "Do not repeat objects. "
                         "Do not return words like 'got it' or 'okay'. Just output the object name directly with no extra text."
                      }
                 ]
@@ -93,24 +98,40 @@ def generate_secret_object():
 
 def generate_hint():
     """Generates a hint for the secret object."""
+    debug_session()  # Log session data for debugging
+
+    secret_object = session.get('secret_object')
+    logging.info(f"Generating hint for secret object: {secret_object}")
+
+    if not secret_object:
+        logging.error("No secret object found in session")
+        return jsonify({"response": "Game not started. Please reset/start a new game.", "game_over": False}), 400
+
     try:
         chat_completion = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[
                 {"role": "system", "content":
-                    f"think of a hint for the {secret_object}"
-                    f"Instead of saying '{secret_object}', always use 'this object' or 'it'."
-                    f"Make the hit simple, one sentence at most"
-                    f"Do not make the hint obvious, the user should not be able to guess what it is directly from the hint"
+                    f"Think of a hint for the object '{secret_object}'. "
+                    f"Instead of saying '{secret_object}', always use 'this object' or 'it'. "
+                    f"Make the hint simple, one sentence at most. "
+                    f"Do not make the hint obvious, the user should not be able to guess what it is directly from the hint."
                  }
             ]
         )
         response = chat_completion.choices[0].message.content
+
+        # Get current chat history from session
+        chat_history_game = session.get('chat_history_game', [])
         chat_history_game.append({"role": "assistant", "content": response})
+        session['chat_history_game'] = chat_history_game
+        session.modified = True  # Important: Mark the session as modified
+
+        return jsonify({"response": response})
+
     except Exception as e:
         logging.error(f"OpenAI API error: {e}")
         return jsonify({"response": "Oops! Something went wrong. Try again.", "game_over": False})
-    return jsonify({"response": response})
 
 def is_question(user_input):
     """Determines if the user input sounds like a question."""
@@ -156,22 +177,42 @@ def apply_word_limit(text, remaining_words):
 # API Endpoints    #
 ####################
 
+# Status endpoint to check if the server is running and session is working
+@app.route("/api/status", methods=["GET"])
+def status():
+    # Set a test value in the session
+    session['test'] = 'Session is working!'
+    session.modified = True
+
+    return jsonify({
+        "status": "ok",
+        "session_test": session.get('test', 'Session not working'),
+        "game_active": bool(session.get('secret_object')),
+        "questions_asked": session.get('question_count', 0)
+    })
+
 # 20 Questions Game Endpoint
 @app.route("/api/minigame", methods=["POST"])
 def minigame():
-    global  question_count, secret_object, chat_history_game
+    debug_session()  # Log session data for debugging
 
-    question_count = session.get('question_count', 0)
-    secret_object = session.get('secret_object', None)
+    # Get the current game state from session
+    question_count = session.get('question_count')
+    secret_object = session.get('secret_object')
     chat_history_game = session.get('chat_history_game', [])
 
+    # Check if the game is initialized
+    if question_count is None or secret_object is None:
+        logging.error("Game not initialized. No secret object or question count in session.")
+        return jsonify({"error": "Game not started. Please reset/start a new game.", "game_over": False}), 400
+
     data = request.get_json()
+    if not data:
+        return jsonify({"error": "No data provided."}), 400
+
     user_prompt = data.get("prompt", "").strip().lower()
     if not user_prompt:
         return jsonify({"error": "No question provided."}), 400
-
-    if secret_object is None:
-        return jsonify({"error": "Game not started. Please reset/start a new game."}), 400
 
     if question_count >= MAX_QUESTIONS:
         return jsonify({"response": "You've used all 20 questions! Now, guess what I'm thinking of.", "game_over": True})
@@ -186,16 +227,21 @@ def minigame():
     # Check if the guess is correct
     if secret_object and secret_object.lower() in guessed_object:
         response = f"🎉 Yes! You got it right, it's {secret_object}!"
-        # Optionally clear the game state if the game is over
+        # Clear the game state
         session.pop('secret_object', None)
         session.pop('question_count', None)
         session.pop('chat_history_game', None)
+        session.modified = True  # Important: Mark the session as modified
         return jsonify({"response": response, "game_over": True})
 
+    # Increment question count and update session
     question_count += 1
     session['question_count'] = question_count
+
+    # Add user question to chat history
     chat_history_game.append({"role": "user", "content": user_prompt})
     session['chat_history_game'] = chat_history_game
+    session.modified = True  # Important: Mark the session as modified
 
     try:
         chat_completion = client.chat.completions.create(
@@ -206,8 +252,7 @@ def minigame():
                             f"The user is asking yes/no questions to guess the object. "
                             f"Always respond with 'Yes' or 'No' and briefly explain why, **BUT NEVER mention the object's name**. "
                             f"Instead of saying '{secret_object}', always use 'this object' or 'it'. "
-
-
+                 # Rest of the prompt is unchanged
                             f"### Object Understanding Rules: "
                             f"- If this object is a **physical thing** that can be grabbed, held, or carried (e.g., telescope, book, phone), answer 'Yes, this object can be held.' "
                             f"- If the object is **too large** to be carried (e.g., car, house, mountain), answer 'No, this object is too big to be carried.' "
@@ -223,7 +268,7 @@ def minigame():
                             f"- If the object **has wheels** (e.g., unicycle, car, bicycle), answer 'Yes, this object has wheels. 😏' "
                             f"- If the object **does not have wheels**, answer 'No, this object does not have wheels. 😏' "
                             f"- Consider its shape, material, color, and function before answering. "
-                            f"- If unsure, say 'I’m not sure, but keep guessing! 😏'. "
+                            f"- If unsure, say 'I'm not sure, but keep guessing! 😏'. "
                             f"- NEVER ignore valid questions or default to 'Nope, that's not it!' unless the answer is truly 'No'. "
 
                             f"### Answer Examples: "
@@ -236,17 +281,19 @@ def minigame():
 
                             f"### Special Handling: "
                             f"- If the user asks 'Is it {secret_object}?', respond with '🎉 Yes! You got it right! You must be psychic! 😏' and end the game."
-                            f"- If the user asks a completely unrelated question (e.g., 'What’s your favorite color?'), respond with 'Let's stay on topic! Ask a yes/no question. 😏' "
+                            f"- If the user asks a completely unrelated question (e.g., 'What's your favorite color?'), respond with 'Let's stay on topic! Ask a yes/no question. 😏' "
                             f"- If the user asks a vague or open-ended question (e.g., 'Tell me about it'), respond with 'Ask me a yes/no question to learn more! 😏' "
-
                  },
-
                 {"role": "user", "content": f"Does this object relate to: {user_prompt}?"}
             ]
         )
         response = chat_completion.choices[0].message.content
         logging.info(f"API returned: {response}")
+
+        # Add assistant response to chat history
         chat_history_game.append({"role": "assistant", "content": response})
+        session['chat_history_game'] = chat_history_game
+        session.modified = True  # Important: Mark the session as modified
 
     except Exception as e:
         logging.error(f"OpenAI API error: {e}")
@@ -255,18 +302,23 @@ def minigame():
     return jsonify({
         "response": response,
         "questions_left": MAX_QUESTIONS - question_count,
-        "game_over": question_count >= MAX_QUESTIONS
+        "game_over": question_count >= MAX_QUESTIONS,
+        "debug_info": {
+            "question_count": question_count,
+            "has_secret": bool(secret_object)
+        }
     })
 
 # Endpoint to reset the game
 @app.route("/api/reset", methods=["POST"])
 def reset():
-    reset_game()
-    return jsonify({"message": "Game has been reset! A new object has been chosen."})
+    logging.info("Reset endpoint called")
+    return reset_game()
 
 # Endpoint to get a hint
 @app.route("/api/hint", methods=["POST"])
 def hint():
+    logging.info("Hint endpoint called")
     return generate_hint()
 
 # General Chat Endpoint
@@ -302,4 +354,4 @@ def chat():
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port)
+    app.run(host='0.0.0.0', port=port, debug=True)

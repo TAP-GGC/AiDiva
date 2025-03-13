@@ -2,7 +2,7 @@ import logging
 import os
 import random
 
-import nltk
+import nltk.data
 import spacy.cli
 from dotenv import load_dotenv
 from flask import Flask, request, jsonify, session
@@ -12,7 +12,10 @@ from openai import OpenAI
 # Download and load NLP models
 spacy.cli.download("en_core_web_sm")
 nlp = spacy.load("en_core_web_sm")
-nltk.download("punkt")
+try:
+    nltk.data.find("tokenizers/punkt")
+except LookupError:
+    nltk.download("punkt")
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -48,6 +51,8 @@ MAX_QUESTIONS = 20
 chat_history_game = [{"role": "system", "content": system_message_minigame}]
 
 def reset_game():
+    global question_count, secret_object, chat_history_game  # Declare globals
+
     # Generate new game state
     question_count = 0
     secret_object = generate_secret_object()
@@ -55,7 +60,7 @@ def reset_game():
 
     # Update session with the new game state
     session['question_count'] = 0
-    session['secret_object'] = generate_secret_object()
+    session['secret_object'] = secret_object
     session['chat_history_game'] = chat_history_game
 
 

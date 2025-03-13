@@ -94,6 +94,13 @@
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ prompt: userInput })
             });
+            .then(res => res.json())
+            .then(data => {
+                console.log('Server response:', data);
+                // Ensure you're referencing the correct property:
+                document.getElementById("output").innerText = data.response;
+            })
+            .catch(err => console.error("Error:", err));
 
             const data = await response.json();
 

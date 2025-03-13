@@ -2,7 +2,7 @@ import logging
 import os
 import random
 
-import nltk.data
+import nltk
 import spacy.cli
 from dotenv import load_dotenv
 from flask import Flask, request, jsonify, session
@@ -12,10 +12,7 @@ from openai import OpenAI
 # Download and load NLP models
 spacy.cli.download("en_core_web_sm")
 nlp = spacy.load("en_core_web_sm")
-try:
-    nltk.data.find("tokenizers/punkt")
-except LookupError:
-    nltk.download("punkt")
+nltk.download("punkt")
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)

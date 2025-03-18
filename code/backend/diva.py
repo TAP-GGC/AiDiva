@@ -441,7 +441,7 @@ def minigame():
 
         # Set user_id cookie if not already set
         if not request.cookies.get('user_id'):
-            response_json.set_cookie('user_id', user_id, max_age=86400*30,secure=True, samesite=None)  # 30 days
+            response_json.set_cookie('user_id', user_id, max_age=86400*30,secure=True, samesite="None")  # 30 days
 
         return response_json
 
@@ -455,7 +455,7 @@ def reset():
 
     # Set user_id cookie if not already set
     if not request.cookies.get('user_id'):
-        response.set_cookie('user_id', user_id, max_age=86400*30, secure=True, samesite=None)  # 30 days
+        response.set_cookie('user_id', user_id, max_age=86400*30, secure=True, samesite="None")  # 30 days
 
     return response
 
@@ -469,7 +469,7 @@ def hint():
 
     # Set user_id cookie if not already set
     if not request.cookies.get('user_id'):
-        response.set_cookie('user_id', user_id, max_age=86400*30, secure=True, samesite=None)  # 30 days
+        response.set_cookie('user_id', user_id, max_age=86400*30, secure=True, samesite="None")  # 30 days
 
     return response
 

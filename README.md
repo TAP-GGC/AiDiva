@@ -66,19 +66,17 @@ To create an interactive, engaging, and humorous chatbot experience that teaches
 
 ## :memo: Publications
 <!-- team members, then professors/advisors. "Name of Publication", event, month and day, year, Georgia Gwinnett College. -->
-1. Gabriel Sosa, My Tran, Rebecca Rahman, Cengiz Gunay, Cindy Robertson. "A Real Fake Workshop", Fake Event, February 1, 2025, Georgia Gwinnett College.  
+1. Gabriel Sosa, My Tran, Rebecca Rahman, Cengiz Gunay, Cindy Robertson. February 1, 2025, Georgia Gwinnett College.  
 
 ## :open_hands: Outreach
 <i>List the outreach events your team has participated in. </i>
-
-Example:
 
 1. <b>TAP Expo</b>, April 1, 2021, Georgia Gwinnett College: to promote the IT field and encourage college students to sign up for TAP.
 2. <b>Class Workshops</b>, March 20, 2025, March 31, 2025, April 1, 2025, & April 4 2025, Georgia Gwinnett College: to promote the IT field to non-IT students.
 3. <b>GGC Atlanta Science Festival<b>, March 15, 2025 & March 22, 2025, Georgia Gwinnett College: to promote the IT field to non-IT students and to other STEM students.
 
 ## :mag_right: Similar Projects
-<i>Use this section to link to a project done in the TAP program that is related in some way to your own. This can be a sister project done during your TAP semester or a TAP project done in the past. Example: </i> 
+<i>Use this section to link to a project done in the TAP program that is related in some way to your own. This can be a sister project done during your TAP semester or a TAP project done in the past. Example: </i> Artify
 
 
 ## :computer: Technology

@@ -45,9 +45,9 @@ You can select from a range of audiences or a single auidience. Examples:
 ## :pencil2: Team: A.I. Diva
 
 <!-- Use the team photo of your choice once youve uploaded it to the team photo folder within the media folder -->
-<img alt="art featuring Rebecca, My, and Gabe" src = "media/team photos/TeamPhoto.webp " width="" height="300">
+<img alt="art featuring Rebecca, My, and Gabe" src = "media/event photos/37f5cca9-7e22-4d54-adc6-9c54cb6eca08.JPG " width="" height="300">
 
-> (From left to right: Rebecca, My, Gabe.)
+> (From left to right: Gabe, Rebecca, My.)
 <!-- replace with full names of your team members -->
 
 * Rebecca Rahman

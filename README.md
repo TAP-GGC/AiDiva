@@ -69,7 +69,6 @@ To create an interactive, engaging, and humorous chatbot experience that teaches
 1. Gabriel Sosa, My Tran, Rebecca Rahman, Cengiz Gunay, Cindy Robertson. February 1, 2025, Georgia Gwinnett College.  
 
 ## :open_hands: Outreach
-<i>List the outreach events your team has participated in. </i>
 
 1. <b>TAP Expo</b>, April 1, 2021, Georgia Gwinnett College: to promote the IT field and encourage college students to sign up for TAP.
 2. <b>Class Workshops</b>, March 20, 2025, March 31, 2025, April 1, 2025, & April 4 2025, Georgia Gwinnett College: to promote the IT field to non-IT students.

@@ -61,7 +61,7 @@ You can select from a range of audiences or a single auidience. Examples:
 
 
 ## :page_with_curl: Project Description
-To create an interactive, engaging, and humorous chatbot experience that teaches users how to interact effectively with AI. The chatbot will have a sassy personality to keep things lighthearted while also demonstrating how important it is to communicate clearly with AI. The project will guide users through common pitfalls and challenges they may face when interacting with AI, ultimately teaching them how to write precise and clear prompts.
+To create an interactive, engaging, and humorous chatbot experience that teaches users how to interact effectively with AI. The chatbot will have a sassy personality to keep things lighthearted while also demonstrating how important it is to communicate clearly with AI. The project will guide users through common pitfalls and challenges they may face when interacting with AI, playing a mini game as well trying to learn how to properly ask questions/prompts on figuring out the object the AI is thinking of, ultimately teaching them how to write precise and clear prompts throughout the whole workshop.
 
 
 ## :memo: Publications
@@ -72,7 +72,7 @@ To create an interactive, engaging, and humorous chatbot experience that teaches
 
 1. <b>TAP Expo</b>, April 1, 2021, Georgia Gwinnett College: to promote the IT field and encourage college students to sign up for TAP.
 2. <b>Class Workshops</b>, March 20, 2025, March 31, 2025, April 1, 2025, & April 4 2025, Georgia Gwinnett College: to promote the IT field to non-IT students.
-3. <b>GGC Atlanta Science Festival<b>, March 15, 2025 & March 22, 2025, Georgia Gwinnett College: to promote the IT field to non-IT students and to other STEM students.
+3. <b>GGC Atlanta Science Festival/Piedmont Park<b>, March 15, 2025 & March 22, 2025, Georgia Gwinnett College: to promote the IT field to non-IT students and to other STEM students.
 
 ## :mag_right: Similar Projects
 <i>Use this section to link to a project done in the TAP program that is related in some way to your own. This can be a sister project done during your TAP semester or a TAP project done in the past. Example: </i> Artify
@@ -103,7 +103,6 @@ Your repo doesn't have to have every section used below. This is just an example
 
 ## Workshop Instructions 
 AIDivaPrompts_.pdf
-(https://docs.google.com/document/d/1oud0-52KviujBliOI8KtNSIPincha-RVPerYmtZTKP8/edit?usp=sharing)(/documents/tutorial%20materials/Scratch%20Workshop%20Walkthrough.pdf)
 
 [Our Game Workshop Video](https://youtu.be/Mtsre0iMStM)
 

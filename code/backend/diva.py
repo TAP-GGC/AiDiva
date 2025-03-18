@@ -20,6 +20,10 @@ app = Flask(__name__)
 app.secret_key = os.getenv("FLASK_SECRET_KEY")  # Add a secret key for sessions
 CORS(app, resources={r"/api/*": {"origins": "https://tap-ggc.github.io"}}, supports_credentials=True)
 
+app.config['SESSION_COOKIE_SECURE'] = True
+app.config['SESSION_COOKIE_SAMESITE'] = "None"
+app.config['SESSION_COOKIE_HTTPONLY'] = False
+
 
 # Load environment variables from .env file
 load_dotenv()
@@ -69,15 +73,36 @@ MAX_QUESTIONS = 20
 
 # ==================== Helper Functions ====================
 def get_user_session():
-    """Get or create a user session."""
+    """Get or create a user session with detailed debugging."""
     user_id = request.cookies.get('user_id')
 
-    if not user_id or user_id not in user_sessions:
+    # Log detailed information about the request
+    logging.info("==== SESSION DEBUG ====")
+    logging.info(f"Request path: {request.path}")
+    logging.info(f"Request headers: {dict(request.headers)}")
+    logging.info(f"Request cookies: {dict(request.cookies)}")
+    logging.info(f"Got user_id from cookie: {user_id}")
+    logging.info(f"Current active sessions: {len(user_sessions)}")
+
+    # Check if we have this user ID in our sessions
+    if user_id and user_id in user_sessions:
+        logging.info(f"Found existing session for user_id: {user_id}")
+        user_session = user_sessions[user_id]
+        logging.info(f"User session secret object: {user_session.secret_object}")
+    else:
+        if not user_id:
+            logging.warning("No user_id cookie found - creating new session")
+        elif user_id not in user_sessions:
+            logging.warning(f"User ID {user_id} not found in sessions dict - creating new session")
+
         # Create a new session
         user_session = UserSession()
         user_id = user_session.id
         user_sessions[user_id] = user_session
+        logging.info(f"Created new session with ID: {user_id}")
+        logging.info(f"New session secret object: {user_session.secret_object}")
 
+    logging.info("==== END SESSION DEBUG ====")
     return user_sessions[user_id], user_id
 
 def apply_word_limit(text, remaining_words):
@@ -455,7 +480,15 @@ def reset():
 
     # Set user_id cookie if not already set
     if not request.cookies.get('user_id'):
-        response.set_cookie('user_id', user_id, max_age=86400*30, secure=True, samesite="None")  # 30 days
+        response.set_cookie(
+            'user_id',
+            user_id,
+            max_age=86400*30,
+            secure=True,            # Required for SameSite=None
+            samesite="None",        # Allows cross-site requests
+            path="/",               # Ensure cookie is available across all paths
+            httponly=False
+        )  # 30 days
 
     return response
 

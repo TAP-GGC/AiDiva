@@ -18,7 +18,8 @@ logging.basicConfig(level=logging.INFO)
 # Initialize Flask app and CORS
 app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY", os.urandom(24))  # Add a secret key for sessions
-CORS(app, resources={r"/api/*": {"origins": "*"}}, supports_credentials=True)  # Enable credentials for CORS
+CORS(app, resources={r"/api/*": {"origins": "https://tap-ggc.github.io"}}, supports_credentials=True)
+
 
 # Load environment variables from .env file
 load_dotenv()
@@ -440,7 +441,7 @@ def minigame():
 
         # Set user_id cookie if not already set
         if not request.cookies.get('user_id'):
-            response_json.set_cookie('user_id', user_id, max_age=86400*30)  # 30 days
+            response_json.set_cookie('user_id', user_id, max_age=86400*30,secure=True, samesite=None)  # 30 days
 
         return response_json
 
@@ -454,7 +455,7 @@ def reset():
 
     # Set user_id cookie if not already set
     if not request.cookies.get('user_id'):
-        response.set_cookie('user_id', user_id, max_age=86400*30)  # 30 days
+        response.set_cookie('user_id', user_id, max_age=86400*30, secure=True, samesite=None)  # 30 days
 
     return response
 
@@ -468,7 +469,7 @@ def hint():
 
     # Set user_id cookie if not already set
     if not request.cookies.get('user_id'):
-        response.set_cookie('user_id', user_id, max_age=86400*30)  # 30 days
+        response.set_cookie('user_id', user_id, max_age=86400*30, secure=True, samesite=None)  # 30 days
 
     return response
 

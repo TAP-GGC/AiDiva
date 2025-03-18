@@ -17,7 +17,7 @@ logging.basicConfig(level=logging.INFO)
 
 # Initialize Flask app and CORS
 app = Flask(__name__)
-app.secret_key = os.getenv("SECRET_KEY", os.urandom(24))  # Add a secret key for sessions
+app.secret_key = os.getenv("FLASK_SECRET_KEY")  # Add a secret key for sessions
 CORS(app, resources={r"/api/*": {"origins": "https://tap-ggc.github.io"}}, supports_credentials=True)
 
 

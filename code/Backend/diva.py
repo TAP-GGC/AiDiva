@@ -3,6 +3,8 @@ import logging
 import random
 import re
 import uuid
+from datetime import timedelta
+
 from flask import Flask, request, jsonify, session
 from flask_cors import CORS
 from openai import OpenAI
@@ -17,9 +19,11 @@ logging.basicConfig(level=logging.INFO)
 
 # Initialize Flask app and CORS
 app = Flask(__name__)
-app.secret_key = os.getenv("FLASK_SECRET_KEY")  # Add a secret key for sessions
 CORS(app, resources={r"/api/*": {"origins": "https://tap-ggc.github.io"}}, supports_credentials=True)
-
+app.secret_key = os.getenv("FLASK_SECRET_KEY")  # Add a secret key for sessions
+app.config['SESSION_TYPE'] = 'filesystem'  # Store sessions on the server filesystem
+app.config['SESSION_PERMANENT'] = True
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=31)  # Sessions last 31 days
 app.config['SESSION_COOKIE_SECURE'] = True
 app.config['SESSION_COOKIE_SAMESITE'] = "None"
 app.config['SESSION_COOKIE_HTTPONLY'] = False
@@ -176,10 +180,48 @@ def is_question(user_input):
 
 def reset_game_for_user(user_session):
     """Resets game variables for a specific user session."""
+    # Update custom session object
     user_session.question_count = 0
     user_session.secret_object = generate_secret_object()
     user_session.game_chat_history = [{"role": "system", "content": minigame_system_message}]
+
+    # ALSO store in Flask session for redundancy
+    session['question_count'] = 0
+    session['secret_object'] = user_session.secret_object
+    session['game_chat_history'] = user_session.game_chat_history
+
     logging.info(f"New secret object chosen for user {user_session.id}: {user_session.secret_object}")
+    logging.info(f"Game reset! New secret object chosen: {session.get('secret_object')}")
+    logging.info(f"SESSION DATA: {{'question_count': '{session.get('question_count')}', 'secret_object': '{session.get('secret_object')}', 'chat_history_game': '{session.get('game_chat_history')}'}}")
+
+def ensure_session_data():
+    """Verify session data exists and is valid. If not, restore from user_sessions or initialize."""
+    # Get user_id from cookie
+    user_id = request.cookies.get('user_id')
+
+    # Check if we have session data
+    if 'secret_object' not in session or 'question_count' not in session:
+        logging.warning("Missing session data - attempting to restore")
+
+        # Try to restore from user_sessions if possible
+        if user_id and user_id in user_sessions:
+            user_session = user_sessions[user_id]
+            session['question_count'] = user_session.question_count
+            session['secret_object'] = user_session.secret_object
+            session['game_chat_history'] = user_session.game_chat_history
+            logging.info(f"Restored session data from user_sessions for {user_id}")
+        else:
+            # Initialize new session data
+            secret_object = generate_secret_object()
+            session['question_count'] = 0
+            session['secret_object'] = secret_object
+            session['game_chat_history'] = [{"role": "system", "content": minigame_system_message}]
+            logging.info(f"Initialized new session data with object: {secret_object}")
+
+    # Log current session state
+    logging.info(f"Current session state: question_count={session.get('question_count')}, secret_object={session.get('secret_object')}")
+
+    return session.get('secret_object'), session.get('question_count', 0)
 
 def generate_hint_for_user(user_session):
     """Generates a hint for the secret object for a specific user."""
@@ -256,6 +298,24 @@ def chat():
 @app.route("/api/minigame", methods=["POST"])
 def minigame():
     user_session, user_id = get_user_session()
+
+    # Also ensure Flask session data exists
+    secret_object, question_count = ensure_session_data()
+
+    # Use both data sources - preferring Flask session if available
+    if secret_object:
+        user_session.secret_object = secret_object
+    else:
+        session['secret_object'] = user_session.secret_object
+
+    # Sync question count
+    if 'question_count' in session:
+        user_session.question_count = session['question_count']
+    else:
+        session['question_count'] = user_session.question_count
+
+    # Log what we're working with
+    logging.info(f"Using secret_object: {secret_object} | question_count: {question_count}")
 
     data = request.get_json()
     user_prompt = data.get("prompt", "").strip().lower()
@@ -453,6 +513,7 @@ def minigame():
             )
             response = chat_completion.choices[0].message.content
             user_session.game_chat_history.append({"role": "assistant", "content": response})
+            session['question_count'] += 1
         except Exception as e:
             logging.error(f"OpenAI API error: {e}")
             return jsonify({"response": "Oops! Something went wrong. Try again.", "game_over": False})

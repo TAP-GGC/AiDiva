@@ -45,9 +45,9 @@ You can select from a range of audiences or a single auidience. Examples:
 ## :pencil2: Team: A.I. Diva
 
 <!-- Use the team photo of your choice once youve uploaded it to the team photo folder within the media folder -->
-<img alt="art featuring Rebecca, My, and Gabe" src = "media/team photos/TeamPhoto.webp " width="" height="300">
+<img alt="art featuring Rebecca, My, and Gabe" src = "media/event photos/37f5cca9-7e22-4d54-adc6-9c54cb6eca08.JPG " width="" height="300">
 
-> (From left to right: Rebecca, My, Gabe.)
+> (From left to right: Gabe, Rebecca, My.)
 <!-- replace with full names of your team members -->
 
 * Rebecca Rahman
@@ -61,23 +61,21 @@ You can select from a range of audiences or a single auidience. Examples:
 
 
 ## :page_with_curl: Project Description
-To create an interactive, engaging, and humorous chatbot experience that teaches users how to interact effectively with AI. The chatbot will have a sassy personality to keep things lighthearted while also demonstrating how important it is to communicate clearly with AI. The project will guide users through common pitfalls and challenges they may face when interacting with AI, ultimately teaching them how to write precise and clear prompts.
+To create an interactive, engaging, and humorous chatbot experience that teaches users how to interact effectively with AI. The chatbot will have a sassy personality to keep things lighthearted while also demonstrating how important it is to communicate clearly with AI. The project will guide users through common pitfalls and challenges they may face when interacting with AI, playing a mini game as well trying to learn how to properly ask questions/prompts on figuring out the object the AI is thinking of, ultimately teaching them how to write precise and clear prompts throughout the whole workshop.
 
 
 ## :memo: Publications
 <!-- team members, then professors/advisors. "Name of Publication", event, month and day, year, Georgia Gwinnett College. -->
-1. Gabriel Sosa, My Tran, Rebecca Rahman, Cengiz Gunay, Cindy Robertson. "A Real Fake Workshop", Fake Event, February 1, 2025, Georgia Gwinnett College.  
+1. Gabriel Sosa, My Tran, Rebecca Rahman, Cengiz Gunay, Cindy Robertson. February 1, 2025, Georgia Gwinnett College.  
 
 ## :open_hands: Outreach
-<i>List the outreach events your team has participated in. </i>
-
-Example:
 
 1. <b>TAP Expo</b>, April 1, 2021, Georgia Gwinnett College: to promote the IT field and encourage college students to sign up for TAP.
-2. <b>Class Workshops</b>, April 13-15, 2021, Georgia Gwinnett College: to promote the IT field to non-IT students.
+2. <b>Class Workshops</b>, March 20, 2025, March 31, 2025, April 1, 2025, & April 4 2025, Georgia Gwinnett College: to promote the IT field to non-IT students.
+3. <b>GGC Atlanta Science Festival/Piedmont Park<b>, March 15, 2025 & March 22, 2025, Georgia Gwinnett College: to promote the IT field to non-IT students and to other STEM students.
 
 ## :mag_right: Similar Projects
-<i>Use this section to link to a project done in the TAP program that is related in some way to your own. This can be a sister project done during your TAP semester or a TAP project done in the past. Example: </i> 
+<i>Use this section to link to a project done in the TAP program that is related in some way to your own. This can be a sister project done during your TAP semester or a TAP project done in the past. Example: </i> Artify
 
 
 ## :computer: Technology
@@ -105,7 +103,6 @@ Your repo doesn't have to have every section used below. This is just an example
 
 ## Workshop Instructions 
 AIDivaPrompts_.pdf
-(https://docs.google.com/document/d/1oud0-52KviujBliOI8KtNSIPincha-RVPerYmtZTKP8/edit?usp=sharing)(/documents/tutorial%20materials/Scratch%20Workshop%20Walkthrough.pdf)
 
 [Our Game Workshop Video](https://youtu.be/Mtsre0iMStM)
 

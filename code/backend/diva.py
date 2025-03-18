@@ -21,7 +21,6 @@ logging.basicConfig(level=logging.INFO)
 app = Flask(__name__)
 app.secret_key = os.environ.get("FLASK_SECRET_KEY")  # Add a secret key for sessions
 CORS(app, resources={r"/api/*": {"origins": "https://tap-ggc.github.io"}}, supports_credentials=True)
-app.secret_key = os.getenv("FLASK_SECRET_KEY")  # Add a secret key for sessions
 app.config['SESSION_TYPE'] = 'filesystem'  # Store sessions on the server filesystem
 app.config['SESSION_PERMANENT'] = True
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=31)  # Sessions last 31 days

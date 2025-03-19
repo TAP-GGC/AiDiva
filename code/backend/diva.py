@@ -77,6 +77,7 @@ MAX_QUESTIONS = 20
 # ==================== Helper Functions ====================
 def get_user_session():
     """Get or create a user session with detailed debugging."""
+    global user_session
     user_id = request.cookies.get('user_id')
 
     # Log detailed information about the request
@@ -95,12 +96,14 @@ def get_user_session():
     else:
         if not user_id:
             logging.warning("No user_id cookie found - creating new session")
+            user_session = UserSession()
+            user_id = user_session.id
         elif user_id not in user_sessions:
             logging.warning(f"User ID {user_id} not found in sessions dict - creating new session")
+            user_session = UserSession()
+            user_session.id =user_id
 
         # Create a new session
-        user_session = UserSession()
-        user_id = user_session.id
         user_sessions[user_id] = user_session
         logging.info(f"Created new session with ID: {user_id}")
         logging.info(f"New session secret object: {user_session.secret_object}")

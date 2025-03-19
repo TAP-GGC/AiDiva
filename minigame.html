@@ -6,8 +6,51 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
     <link rel="stylesheet" href="assets/css/main.css" />
     <noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+    <style>
+        #cookie-consent {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            z-index: 1000;
+            text-align: center;
+            max-width: 500px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
+        #cookie-consent button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            margin: 0 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        #cookie-consent button:hover {
+            opacity: 0.9;
+        }
+        #decline-cookies {
+            background-color: #f44336 !important;
+        }
+    </style>
 </head>
 <body class="is-preload">
+
+<!-- Cookie Consent Popup -->
+<div id="cookie-consent">
+    <p>This game uses cookies to remember your progress. Please accept cookies for the best experience.</p>
+    <div style="margin-top: 10px;">
+        <button id="accept-cookies">Accept</button>
+        <button id="decline-cookies">Decline</button>
+    </div>
+</div>
+
 <!-- Wrapper -->
 <div id="wrapper">
 
@@ -73,6 +116,49 @@
         }
         return `${baseUrl}${endpoint}`;
     }
+
+    // Cookie consent handling
+    document.addEventListener('DOMContentLoaded', function() {
+        // Check if user has already made a choice
+        const cookieConsent = localStorage.getItem('cookieConsent');
+
+        if (cookieConsent === null) {
+            // If no choice has been made, show the popup
+            document.getElementById('cookie-consent').style.display = 'block';
+        }
+
+        // Handle accept button
+        document.getElementById('accept-cookies').addEventListener('click', function() {
+            localStorage.setItem('cookieConsent', 'accepted');
+            document.getElementById('cookie-consent').style.display = 'none';
+
+            // Initialize the game after consent
+            initGame();
+        });
+
+        // Handle decline button
+        document.getElementById('decline-cookies').addEventListener('click', function() {
+            localStorage.setItem('cookieConsent', 'declined');
+            document.getElementById('cookie-consent').style.display = 'none';
+
+            // Show message about limited functionality
+            const messagesDiv = document.getElementById('messages');
+            messagesDiv.innerHTML = `<div class="ai-message">You've declined cookies. The game will work, but your progress won't be saved between sessions. You can change this setting by clearing your browser data and refreshing.</div>`;
+            messagesDiv.innerHTML += `<div class="ai-message"><button onclick="initGame()" class="start-anyway">Start Game Anyway</button></div>`;
+        });
+
+        // Only initialize the game automatically if consent was previously given
+        if (cookieConsent === 'accepted') {
+            initGame();
+        } else if (cookieConsent === 'declined') {
+            const messagesDiv = document.getElementById('messages');
+            messagesDiv.innerHTML = `<div class="ai-message">You've declined cookies. The game will work, but your progress won't be saved between sessions. You can change this setting by clearing your browser data and refreshing.</div>`;
+
+            // Add a button to start the game anyway
+            messagesDiv.innerHTML += `<div class="ai-message"><button onclick="initGame()" class="start-anyway">Start Game Anyway</button></div>`;
+        }
+    });
+
 
     // Function to send the message
     async function sendMessage() {
@@ -286,9 +372,12 @@
         const messagesDiv = document.getElementById("messages");
 
         try {
-            console.log("Initializing game...");
+            // Get the URL with session ID as a query parameter if available
+            const url = getApiUrlWithSession("reset");
+            console.log("Initializing game with url:", url);
+
             // Send reset request to backend to initialize the game
-            const response = await fetch("https://ai-diva-42bed2958d91.herokuapp.com/api/reset", {
+            const response = await fetch(url, {
                 method: "POST",
                 credentials: "include"
             });
@@ -299,11 +388,21 @@
 
             const data = await response.json();
             console.log("Init game response:", data);
+
+            // Check for user_id in cookies
+            const cookieValue = document.cookie.split('; ').find(row => row.startsWith('user_id='));
+            if (cookieValue) {
+                // Extract and store session ID from cookie
+                const newSessionId = cookieValue.split('=')[1];
+                if (newSessionId && (!sessionId || newSessionId !== sessionId)) {
+                    sessionId = newSessionId;
+                    localStorage.setItem('aiDivaSessionId', sessionId);
+                    console.log("Updated session ID from cookie:", sessionId);
+                }
+            }
+
             messagesDiv.innerHTML = `<div class="ai-message">${data.message}</div>`;
             messagesDiv.innerHTML += `<div class="ai-message">Ask a yes/no question to guess what I'm thinking of!</div>`;
-
-            // Log cookies after reset
-            console.log("Cookies after reset:", document.cookie);
         } catch (error) {
             console.error("Error initializing game:", error);
             messagesDiv.innerHTML = `<div class="ai-message">Error initializing the game: ${error.message}. Please try refreshing the page.</div>`;

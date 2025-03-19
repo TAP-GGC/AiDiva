@@ -297,7 +297,16 @@ def chat():
 
 @app.route("/api/minigame", methods=["POST"])
 def minigame():
-    user_session, user_id = get_user_session()
+    # Get session_id from query parameters if available
+    client_session_id = request.args.get('client_session_id')
+
+    if client_session_id and client_session_id in user_sessions:
+        user_session = user_sessions[client_session_id]
+        user_id = client_session_id
+        logging.info(f"Using client_session_id from query params: {client_session_id}")
+    else:
+        # Otherwise use the standard get_user_session function
+        user_session, user_id = get_user_session()
 
     # Also ensure Flask session data exists
     secret_object, question_count = ensure_session_data()
@@ -518,10 +527,13 @@ def minigame():
             logging.error(f"OpenAI API error: {e}")
             return jsonify({"response": "Oops! Something went wrong. Try again.", "game_over": False})
 
+        secret_object, question_count = ensure_session_data()
+
         response_json = jsonify({
             "response": response,
             "questions_left": MAX_QUESTIONS - user_session.question_count,
             "game_over": user_session.question_count >= MAX_QUESTIONS
+            "session_id": user_id
         })
 
         # Set user_id cookie if not already set
@@ -533,10 +545,24 @@ def minigame():
 @app.route("/api/reset", methods=["POST"])
 def reset():
     """Resets the 20 Questions game for a specific user."""
-    user_session, user_id = get_user_session()
+    # Get session_id from query parameters if available
+    client_session_id = request.args.get('client_session_id')
+
+    # If client_session_id is provided and exists in our sessions dictionary, use it
+    if client_session_id and client_session_id in user_sessions:
+        user_session = user_sessions[client_session_id]
+        user_id = client_session_id
+        logging.info(f"Using client_session_id from query params: {client_session_id}")
+    else:
+        # Otherwise use the standard get_user_session function
+        user_session, user_id = get_user_session()
+
     reset_game_for_user(user_session)
 
-    response = jsonify({"message": "Game has been reset! A new object has been chosen."})
+    response = jsonify({
+        "message": "Game has been reset! A new object has been chosen.",
+        "session_id": user_id  # Include session_id in response for client tracking
+    })
 
     # Set user_id cookie if not already set
     if not request.cookies.get('user_id'):
@@ -547,10 +573,24 @@ def reset():
 @app.route("/api/hint", methods=["POST"])
 def hint():
     """Provides a hint for the current game for a specific user."""
-    user_session, user_id = get_user_session()
+    # Get session_id from query parameters if available
+    client_session_id = request.args.get('client_session_id')
+
+    # If client_session_id is provided and exists in our sessions dictionary, use it
+    if client_session_id and client_session_id in user_sessions:
+        user_session = user_sessions[client_session_id]
+        user_id = client_session_id
+        logging.info(f"Using client_session_id from query params: {client_session_id}")
+    else:
+        # Otherwise use the standard get_user_session function
+        user_session, user_id = get_user_session()
+
     hint_response = generate_hint_for_user(user_session)
 
-    response = jsonify({"response": hint_response})
+    response = jsonify({
+        "response": hint_response,
+        "session_id": user_id  # Include session_id in response for client tracking
+    })
 
     # Set user_id cookie if not already set
     if not request.cookies.get('user_id'):

@@ -300,6 +300,9 @@ def minigame():
     # Get session_id from query parameters if available
     client_session_id = request.args.get('client_session_id')
 
+    # Track if this is a new session
+    is_new_session = False
+
     if client_session_id and client_session_id in user_sessions:
         user_session = user_sessions[client_session_id]
         user_id = client_session_id
@@ -307,21 +310,33 @@ def minigame():
     else:
         # Otherwise use the standard get_user_session function
         user_session, user_id = get_user_session()
+        # Check if this is a newly created session (user_id not in cookies)
+        is_new_session = user_id != request.cookies.get('user_id')
+        if is_new_session:
+            logging.info(f"New session detected with ID: {user_id}")
 
     # Also ensure Flask session data exists
     secret_object, question_count = ensure_session_data()
 
-    # Use both data sources - preferring Flask session if available
-    if secret_object:
-        user_session.secret_object = secret_object
-    else:
+    # Handle session data synchronization
+    if is_new_session:
+        # For new sessions, always use the freshly generated object from UserSession
         session['secret_object'] = user_session.secret_object
-
-    # Sync question count
-    if 'question_count' in session:
-        user_session.question_count = session['question_count']
-    else:
         session['question_count'] = user_session.question_count
+        session['game_chat_history'] = user_session.game_chat_history
+        logging.info(f"New session - using UserSession object: {user_session.secret_object}")
+    else:
+        # For existing sessions, sync both ways
+        if secret_object:
+            user_session.secret_object = secret_object
+        else:
+            session['secret_object'] = user_session.secret_object
+
+        # Sync question count
+        if 'question_count' in session:
+            user_session.question_count = session['question_count']
+        else:
+            session['question_count'] = user_session.question_count
 
     # Log what we're working with
     logging.info(f"Using secret_object: {secret_object} | question_count: {question_count}")

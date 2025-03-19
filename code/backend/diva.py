@@ -532,7 +532,7 @@ def minigame():
         response_json = jsonify({
             "response": response,
             "questions_left": MAX_QUESTIONS - user_session.question_count,
-            "game_over": user_session.question_count >= MAX_QUESTIONS
+            "game_over": user_session.question_count >= MAX_QUESTIONS,
             "session_id": user_id
         })
 

@@ -297,6 +297,9 @@ def chat():
 
 @app.route("/api/minigame", methods=["POST"])
 def minigame():
+
+    logging.info(f"Request cookies: {dict(request.cookies)}")
+    logging.info(f"Session before processing: {dict(session) if session else 'No session'}")
     # Get session_id from query parameters if available
     client_session_id = request.args.get('client_session_id')
 
@@ -550,6 +553,9 @@ def minigame():
             "game_over": user_session.question_count >= MAX_QUESTIONS,
             "session_id": user_id
         })
+
+        logging.info(f"UserSession after processing: {user_session.secret_object}, {user_session.question_count}")
+        logging.info(f"Flask session after processing: {dict(session) if session else 'No session'}")
 
         # Set user_id cookie if not already set
         if not request.cookies.get('user_id'):

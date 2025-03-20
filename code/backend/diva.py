@@ -368,203 +368,209 @@ def minigame():
     user_session.question_count += 1
     user_session.game_chat_history.append({"role": "user", "content": user_prompt})
 
-    # Determine if the user is making a guess
-    if user_prompt.startswith("i guess ") or user_prompt.startswith("my guess is "):
-        guessed_object = user_prompt.replace("i guess ", "").replace("my guess is ", "").strip()
-        if user_session.secret_object.lower() == guessed_object:
-            response = f"🎉 Yes! You got it right, it's {user_session.secret_object}! You must be psychic! 😏"
-            logging.info(f"🎉 User {user_id} - Correct guess on question {user_session.question_count}: {user_session.secret_object}")
-            reset_game_for_user(user_session)
-            return jsonify({"response": response, "game_over": True})
-        else:
-            response = "Nope, that's not it! Keep trying, detective. 😏"
-            return jsonify({"response": response, "game_over": False})
+    # First, clean the input by removing punctuation and extra spaces
+    clean_prompt = user_prompt.lower().replace('?', '').strip()
+    guessed_object = None
 
-    # If the prompt starts with "is it a" or "is it an" and is very short, treat it as a guess
-    elif (user_prompt.startswith("is it a ") or user_prompt.startswith("is it an ")) and len(user_prompt.split()) <= 4:
-        guessed_object = user_prompt.replace("is it a ", "").replace("is it an ", "").strip()
-        if user_session.secret_object.lower() == guessed_object:
-            response = f"🎉 Yes! You got it right, it's {user_session.secret_object}! You must be psychic! 😏"
-            logging.info(f"🎉 User {user_id} - Correct guess on question {user_session.question_count}: {user_session.secret_object}")
-            reset_game_for_user(user_session)
-            return jsonify({"response": response, "game_over": True})
-        else:
-            response = "Nope, that's not it! Keep trying, detective. 😏"
-            return jsonify({"response": response, "game_over": False})
+        # Direct guesses pattern
+    if re.match(r'^(i guess|my guess is) (.+)$', clean_prompt):
+        guessed_object = re.sub(r'^(i guess|my guess is) ', '', clean_prompt)
+        handle_as_guess = True
 
-    # Otherwise, treat the input as a yes/no property question
+    # Question-based guesses pattern
+    elif re.match(r'^is (it|this|the|the object) (a |an |)(.+)$', clean_prompt):
+        guessed_object = re.sub(r'^is (it|this|the|the object) (a |an |)', '', clean_prompt)
+
+        # Only process as a guess if it's short (1-2 words)
+        if len(guessed_object.split()) <= 2:
+            handle_as_guess = True
+        else:
+            # It's a more complex question, not a direct guess
+            handle_as_guess = False
+            guessed_object = None
     else:
-        user_session.game_chat_history.append({"role": "assistant", "content": user_prompt})
-        try:
-            chat_completion = client_diva.chat.completions.create(
-                model="gpt-3.5-turbo",
-                messages=[
-                    {"role": "system",
-                     "content": f"You are a sassy AI playing 20 Questions. The secret object is '{user_session.secret_object}'. "
-                                f"The user is asking yes/no questions to guess the object. "
-                                f"Always respond with 'Yes' or 'No' and briefly explain why, **BUT NEVER mention the object's name**. "
-                                f"Instead of saying '{user_session.secret_object}', always use 'this object' or 'it'. "
+        # Not a guess pattern at all
+        handle_as_guess = False
+
+    # Handle it as a guess if we detected a guessing pattern
+    if handle_as_guess and guessed_object and guessed_object == user_session.secret_object.lower():
+        response = f"🎉 Yes! You got it right, it's {user_session.secret_object}! You must be psychic! 😏"
+        logging.info(f"🎉 User {user_id} - Correct guess on question {user_session.question_count}: {user_session.secret_object}")
+        reset_game_for_user(user_session)
+        return jsonify({"response": response, "game_over": True})
+    elif handle_as_guess:
+        response = "Nope, that's not it! Keep trying, detective. 😏"
+        return jsonify({"response": response, "game_over": False})
+
+    user_session.game_chat_history.append({"role": "assistant", "content": user_prompt})
+    try:
+        chat_completion = client_diva.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system",
+                 "content": f"You are a sassy AI playing 20 Questions. The secret object is '{user_session.secret_object}'. "
+                            f"The user is asking yes/no questions to guess the object. "
+                            f"Always respond with 'Yes' or 'No' and briefly explain why, **BUT NEVER mention the object's name**. "
+                            f"Instead of saying '{user_session.secret_object}', always use 'this object' or 'it'. "
 
 
-                                f"### Object Understanding Rules: "
+                            f"### Object Understanding Rules: "
 
-                                f"#### Physical Properties:"
-                                f"- If this object is a physical thing that can be grabbed, held, or carried (e.g., telescope, book, phone), answer 'Yes, this object can be held.' "
-                                f"- If the object is too large to be carried (e.g., car, house, mountain), answer 'No, this object is too big to be carried.' "
-                                f"- If the object is not tangible (e.g., Wi-Fi, time, an idea), answer 'No, this object cannot be physically grabbed.' "
-                                f"- If the object is big (e.g., tree, house, car, elephant, airplane), answer 'Yes, this object is large. 😏' "
-                                f"- If the object is small (e.g., coin, phone, key), answer 'Yes, this object is small and easy to carry. 😏' "
-                                f"- If the object varies in size (e.g., book, box, ball), answer 'It depends! This object comes in different sizes. 😏' "
-                                f"- If the object is made of metal (e.g., car, fork, robot), answer 'Yes, this object contains metal. 😏' "
-                                f"- If the object is not made of metal (e.g., paper, cotton, plastic toy), answer 'No, this object isn't made of metal. 😏' "
+                            f"#### Physical Properties:"
+                            f"- If this object is a physical thing that can be grabbed, held, or carried (e.g., telescope, book, phone), answer 'Yes, this object can be held.' "
+                            f"- If the object is too large to be carried (e.g., car, house, mountain), answer 'No, this object is too big to be carried.' "
+                            f"- If the object is not tangible (e.g., Wi-Fi, time, an idea), answer 'No, this object cannot be physically grabbed.' "
+                            f"- If the object is big (e.g., tree, house, car, elephant, airplane), answer 'Yes, this object is large. 😏' "
+                            f"- If the object is small (e.g., coin, phone, key), answer 'Yes, this object is small and easy to carry. 😏' "
+                            f"- If the object varies in size (e.g., book, box, ball), answer 'It depends! This object comes in different sizes. 😏' "
+                            f"- If the object is made of metal (e.g., car, fork, robot), answer 'Yes, this object contains metal. 😏' "
+                            f"- If the object is not made of metal (e.g., paper, cotton, plastic toy), answer 'No, this object isn't made of metal. 😏' "
 
-                                f"#### Functional Properties:"
-                                f"- If this object is commonly used in a certain situation (e.g., an umbrella in the rain), answer 'Yes, this object is designed for that use.' "
-                                f"- If the object is not used for that purpose, answer 'No, this object is not typically used for that.' "
-                                f"- If the object has wheels (e.g., unicycle, car, bicycle), answer 'Yes, this object has wheels. 😏' "
-                                f"- If the object does not have wheels, answer 'No, this object does not have wheels. 😏' "
-                                f"- If the object is electronic (e.g., computer, smartphone, TV), answer 'Yes, this object uses electricity. 😏' "
-                                f"- If the object is not electronic (e.g., book, rock, wooden chair), answer 'No, this object doesn't use electricity. 😏' "
-                                f"- If the object is wearable (e.g., hat, shoes, jewelry), answer 'Yes, this object can be worn. 😏' "
-                                f"- If the object is not wearable (e.g., table, car, book), answer 'No, this object is not something you would wear. 😏' "
+                            f"#### Functional Properties:"
+                            f"- If this object is commonly used in a certain situation (e.g., an umbrella in the rain), answer 'Yes, this object is designed for that use.' "
+                            f"- If the object is not used for that purpose, answer 'No, this object is not typically used for that.' "
+                            f"- If the object has wheels (e.g., unicycle, car, bicycle), answer 'Yes, this object has wheels. 😏' "
+                            f"- If the object does not have wheels, answer 'No, this object does not have wheels. 😏' "
+                            f"- If the object is electronic (e.g., computer, smartphone, TV), answer 'Yes, this object uses electricity. 😏' "
+                            f"- If the object is not electronic (e.g., book, rock, wooden chair), answer 'No, this object doesn't use electricity. 😏' "
+                            f"- If the object is wearable (e.g., hat, shoes, jewelry), answer 'Yes, this object can be worn. 😏' "
+                            f"- If the object is not wearable (e.g., table, car, book), answer 'No, this object is not something you would wear. 😏' "
 
-                                f"#### Sensory Properties:"
-                                f"- If the object is brightly colored (e.g., traffic cone, parrot, neon sign), answer 'Yes, this object is typically bright or colorful. 😏' "
-                                f"- If the object has a strong smell (e.g., perfume, cheese, skunk), answer 'Yes, this object has a distinctive odor. 😏' "
-                                f"- If the object has a texture (e.g., sandpaper, velvet, fur), answer 'Yes, this object has a notable texture. 😏' "
-                                f"- If the object is transparent (e.g., glass, clear plastic, window), answer 'Yes, this object is see-through. 😏' "
-                                f"- If the object is reflective (e.g., mirror, polished metal, glass), answer 'Yes, this object can reflect light or images. 😏' "
+                            f"#### Sensory Properties:"
+                            f"- If the object is brightly colored (e.g., traffic cone, parrot, neon sign), answer 'Yes, this object is typically bright or colorful. 😏' "
+                            f"- If the object has a strong smell (e.g., perfume, cheese, skunk), answer 'Yes, this object has a distinctive odor. 😏' "
+                            f"- If the object has a texture (e.g., sandpaper, velvet, fur), answer 'Yes, this object has a notable texture. 😏' "
+                            f"- If the object is transparent (e.g., glass, clear plastic, window), answer 'Yes, this object is see-through. 😏' "
+                            f"- If the object is reflective (e.g., mirror, polished metal, glass), answer 'Yes, this object can reflect light or images. 😏' "
 
-                                f"#### Origin & Production:"
-                                f"- If the object is natural (e.g., rock, tree, fruit), answer 'Yes, this object occurs in nature. 😏' "
-                                f"- If the object is human-made (e.g., computer, car, book), answer 'Yes, this object is manufactured by humans. 😏' "
-                                f"- If the object is handcrafted (e.g., pottery, knitted sweater, carved statue), answer 'Yes, this object can be made by hand. 😏' "
-                                f"- If the object is mass-produced (e.g., plastic bottle, smartphone, paper clip), answer 'Yes, this object is typically mass-produced. 😏' "
+                            f"#### Origin & Production:"
+                            f"- If the object is natural (e.g., rock, tree, fruit), answer 'Yes, this object occurs in nature. 😏' "
+                            f"- If the object is human-made (e.g., computer, car, book), answer 'Yes, this object is manufactured by humans. 😏' "
+                            f"- If the object is handcrafted (e.g., pottery, knitted sweater, carved statue), answer 'Yes, this object can be made by hand. 😏' "
+                            f"- If the object is mass-produced (e.g., plastic bottle, smartphone, paper clip), answer 'Yes, this object is typically mass-produced. 😏' "
 
-                                f"#### Use & Purpose:"
-                                f"- If the object is used for entertainment (e.g., TV, board game, musical instrument), answer 'Yes, this object is used for entertainment. 😏' "
-                                f"- If the object is used for communication (e.g., phone, computer, paper), answer 'Yes, this object can be used for communication. 😏' "
-                                f"- If the object is decorative (e.g., painting, vase, ornament), answer 'Yes, this object is often used for decoration. 😏' "
-                                f"- If the object is a tool (e.g., hammer, scissors, screwdriver), answer 'Yes, this object is a tool. 😏' "
-                                f"- If the object is used for cooking (e.g., pot, spatula, oven), answer 'Yes, this object is used in cooking. 😏' "
+                            f"#### Use & Purpose:"
+                            f"- If the object is used for entertainment (e.g., TV, board game, musical instrument), answer 'Yes, this object is used for entertainment. 😏' "
+                            f"- If the object is used for communication (e.g., phone, computer, paper), answer 'Yes, this object can be used for communication. 😏' "
+                            f"- If the object is decorative (e.g., painting, vase, ornament), answer 'Yes, this object is often used for decoration. 😏' "
+                            f"- If the object is a tool (e.g., hammer, scissors, screwdriver), answer 'Yes, this object is a tool. 😏' "
+                            f"- If the object is used for cooking (e.g., pot, spatula, oven), answer 'Yes, this object is used in cooking. 😏' "
 
-                                f"#### Cultural & Social Context:"
-                                f"- If the object is expensive (e.g., diamond, yacht, luxury car), answer 'Yes, this object is typically expensive. 😏' "
-                                f"- If the object is common in households (e.g., chair, toothbrush, refrigerator), answer 'Yes, this object is found in most homes. 😏' "
-                                f"- If the object is seasonal (e.g., Christmas tree, beach ball, snow shovel), answer 'Yes, this object is associated with specific seasons. 😏' "
-                                f"- If the object is culturally significant (e.g., religious symbol, national flag), answer 'Yes, this object holds cultural significance. 😏' "
+                            f"#### Cultural & Social Context:"
+                            f"- If the object is expensive (e.g., diamond, yacht, luxury car), answer 'Yes, this object is typically expensive. 😏' "
+                            f"- If the object is common in households (e.g., chair, toothbrush, refrigerator), answer 'Yes, this object is found in most homes. 😏' "
+                            f"- If the object is seasonal (e.g., Christmas tree, beach ball, snow shovel), answer 'Yes, this object is associated with specific seasons. 😏' "
+                            f"- If the object is culturally significant (e.g., religious symbol, national flag), answer 'Yes, this object holds cultural significance. 😏' "
 
-                                f"#### Environmental Impact:"
-                                f"- If the object is recyclable (e.g., aluminum can, glass bottle, paper), answer 'Yes, this object can be recycled. 😏' "
-                                f"- If the object is biodegradable (e.g., fruit peel, paper, wooden item), answer 'Yes, this object will naturally decompose. 😏' "
-                                f"- If the object is environmentally harmful (e.g., plastic bag, styrofoam), answer 'Yes, this object can be harmful to the environment. 😏' "
+                            f"#### Environmental Impact:"
+                            f"- If the object is recyclable (e.g., aluminum can, glass bottle, paper), answer 'Yes, this object can be recycled. 😏' "
+                            f"- If the object is biodegradable (e.g., fruit peel, paper, wooden item), answer 'Yes, this object will naturally decompose. 😏' "
+                            f"- If the object is environmentally harmful (e.g., plastic bag, styrofoam), answer 'Yes, this object can be harmful to the environment. 😏' "
 
-                                f"#### Temporal Aspects:"
-                                f"- If the object is modern (e.g., smartphone, electric car, 3D printer), answer 'Yes, this object is a modern invention. 😏' "
-                                f"- If the object is ancient (e.g., sundial, hieroglyphics, stone tools), answer 'Yes, this object has existed for centuries. 😏' "
-                                f"- If the object is temporary (e.g., ice sculpture, sandcastle, chalk drawing), answer 'Yes, this object is not permanent. 😏' "
-                                f"- If the object changes over time (e.g., plant, candle, battery), answer 'Yes, this object changes as time passes. 😏' "
+                            f"#### Temporal Aspects:"
+                            f"- If the object is modern (e.g., smartphone, electric car, 3D printer), answer 'Yes, this object is a modern invention. 😏' "
+                            f"- If the object is ancient (e.g., sundial, hieroglyphics, stone tools), answer 'Yes, this object has existed for centuries. 😏' "
+                            f"- If the object is temporary (e.g., ice sculpture, sandcastle, chalk drawing), answer 'Yes, this object is not permanent. 😏' "
+                            f"- If the object changes over time (e.g., plant, candle, battery), answer 'Yes, this object changes as time passes. 😏' "
 
-                                f"#### Nature & Classification:"
-                                f"- If the object is food (e.g., banana, pizza, cupcake), answer 'Yes, this object is a type of food. 😏' "
-                                f"- If the object is not food (e.g., unicycle, book, phone), answer 'No, this object is not food. 😏' "
-                                f"- If the object is alive (e.g., dog, plant, human), answer 'Yes, this object is a living thing. 😏' "
-                                f"- If the object is not alive (e.g., chair, computer, book), answer 'No, this object is not a living thing. 😏' "
+                            f"#### Nature & Classification:"
+                            f"- If the object is food (e.g., banana, pizza, cupcake), answer 'Yes, this object is a type of food. 😏' "
+                            f"- If the object is not food (e.g., unicycle, book, phone), answer 'No, this object is not food. 😏' "
+                            f"- If the object is alive (e.g., dog, plant, human), answer 'Yes, this object is a living thing. 😏' "
+                            f"- If the object is not alive (e.g., chair, computer, book), answer 'No, this object is not a living thing. 😏' "
 
-                                f"#### Behavior Properties:"
-                                f"- If the object can move on its own (e.g., cat, car, robot), answer 'Yes, this object can move independently. 😏' "
-                                f"- If the object cannot move on its own (e.g., table, painting, rock), answer 'No, this object can't move by itself. 😏' "
-                                f"- If the object makes noise (e.g., dog, bell, musical instrument), answer 'Yes, this object can make sounds. 😏' "
-                                f"- If the object doesn't make noise (e.g., pillow, pencil, painting), answer 'No, this object doesn't make noise. 😏' "
+                            f"#### Behavior Properties:"
+                            f"- If the object can move on its own (e.g., cat, car, robot), answer 'Yes, this object can move independently. 😏' "
+                            f"- If the object cannot move on its own (e.g., table, painting, rock), answer 'No, this object can't move by itself. 😏' "
+                            f"- If the object makes noise (e.g., dog, bell, musical instrument), answer 'Yes, this object can make sounds. 😏' "
+                            f"- If the object doesn't make noise (e.g., pillow, pencil, painting), answer 'No, this object doesn't make noise. 😏' "
 
-                                f"#### Location Properties:"
-                                f"- If the object is found indoors (e.g., sofa, fridge, bed), answer 'Yes, this object is typically found indoors. 😏' "
-                                f"- If the object is found outdoors (e.g., tree, garden hose, street sign), answer 'Yes, this object is typically found outdoors. 😏' "
-                                f"- If the object is found in both places, answer 'This object can be found both indoors and outdoors. 😏' "
+                            f"#### Location Properties:"
+                            f"- If the object is found indoors (e.g., sofa, fridge, bed), answer 'Yes, this object is typically found indoors. 😏' "
+                            f"- If the object is found outdoors (e.g., tree, garden hose, street sign), answer 'Yes, this object is typically found outdoors. 😏' "
+                            f"- If the object is found in both places, answer 'This object can be found both indoors and outdoors. 😏' "
 
-                                f"#### Sensory Properties:"
-                                f"- If the object is brightly colored (e.g., traffic cone, parrot, neon sign), answer 'Yes, this object is typically bright or colorful. 😏' "
-                                f"- If the object has a strong smell (e.g., perfume, cheese, skunk), answer 'Yes, this object has a distinctive odor. 😏' "
-                                f"- If the object has a texture (e.g., sandpaper, velvet, fur), answer 'Yes, this object has a notable texture. 😏' "
-                                f"- If the object is transparent (e.g., glass, clear plastic, window), answer 'Yes, this object is see-through. 😏' "
-                                f"- If the object is reflective (e.g., mirror, polished metal, glass), answer 'Yes, this object can reflect light or images. 😏' "
+                            f"#### Sensory Properties:"
+                            f"- If the object is brightly colored (e.g., traffic cone, parrot, neon sign), answer 'Yes, this object is typically bright or colorful. 😏' "
+                            f"- If the object has a strong smell (e.g., perfume, cheese, skunk), answer 'Yes, this object has a distinctive odor. 😏' "
+                            f"- If the object has a texture (e.g., sandpaper, velvet, fur), answer 'Yes, this object has a notable texture. 😏' "
+                            f"- If the object is transparent (e.g., glass, clear plastic, window), answer 'Yes, this object is see-through. 😏' "
+                            f"- If the object is reflective (e.g., mirror, polished metal, glass), answer 'Yes, this object can reflect light or images. 😏' "
 
-                                f"#### Origin & Production:"
-                                f"- If the object is natural (e.g., rock, tree, fruit), answer 'Yes, this object occurs in nature. 😏' "
-                                f"- If the object is human-made (e.g., computer, car, book), answer 'Yes, this object is manufactured by humans. 😏' "
-                                f"- If the object is handcrafted (e.g., pottery, knitted sweater, carved statue), answer 'Yes, this object can be made by hand. 😏' "
-                                f"- If the object is mass-produced (e.g., plastic bottle, smartphone, paper clip), answer 'Yes, this object is typically mass-produced. 😏' "
+                            f"#### Origin & Production:"
+                            f"- If the object is natural (e.g., rock, tree, fruit), answer 'Yes, this object occurs in nature. 😏' "
+                            f"- If the object is human-made (e.g., computer, car, book), answer 'Yes, this object is manufactured by humans. 😏' "
+                            f"- If the object is handcrafted (e.g., pottery, knitted sweater, carved statue), answer 'Yes, this object can be made by hand. 😏' "
+                            f"- If the object is mass-produced (e.g., plastic bottle, smartphone, paper clip), answer 'Yes, this object is typically mass-produced. 😏' "
 
-                                f"#### Use & Purpose:"
-                                f"- If the object is used for entertainment (e.g., TV, board game, musical instrument), answer 'Yes, this object is used for entertainment. 😏' "
-                                f"- If the object is used for communication (e.g., phone, computer, paper), answer 'Yes, this object can be used for communication. 😏' "
-                                f"- If the object is decorative (e.g., painting, vase, ornament), answer 'Yes, this object is often used for decoration. 😏' "
-                                f"- If the object is a tool (e.g., hammer, scissors, screwdriver), answer 'Yes, this object is a tool. 😏' "
-                                f"- If the object is used for cooking (e.g., pot, spatula, oven), answer 'Yes, this object is used in cooking. 😏' "
+                            f"#### Use & Purpose:"
+                            f"- If the object is used for entertainment (e.g., TV, board game, musical instrument), answer 'Yes, this object is used for entertainment. 😏' "
+                            f"- If the object is used for communication (e.g., phone, computer, paper), answer 'Yes, this object can be used for communication. 😏' "
+                            f"- If the object is decorative (e.g., painting, vase, ornament), answer 'Yes, this object is often used for decoration. 😏' "
+                            f"- If the object is a tool (e.g., hammer, scissors, screwdriver), answer 'Yes, this object is a tool. 😏' "
+                            f"- If the object is used for cooking (e.g., pot, spatula, oven), answer 'Yes, this object is used in cooking. 😏' "
 
-                                f"#### Cultural & Social Context:"
-                                f"- If the object is expensive (e.g., diamond, yacht, luxury car), answer 'Yes, this object is typically expensive. 😏' "
-                                f"- If the object is common in households (e.g., chair, toothbrush, refrigerator), answer 'Yes, this object is found in most homes. 😏' "
-                                f"- If the object is seasonal (e.g., Christmas tree, beach ball, snow shovel), answer 'Yes, this object is associated with specific seasons. 😏' "
-                                f"- If the object is culturally significant (e.g., religious symbol, national flag), answer 'Yes, this object holds cultural significance. 😏' "
+                            f"#### Cultural & Social Context:"
+                            f"- If the object is expensive (e.g., diamond, yacht, luxury car), answer 'Yes, this object is typically expensive. 😏' "
+                            f"- If the object is common in households (e.g., chair, toothbrush, refrigerator), answer 'Yes, this object is found in most homes. 😏' "
+                            f"- If the object is seasonal (e.g., Christmas tree, beach ball, snow shovel), answer 'Yes, this object is associated with specific seasons. 😏' "
+                            f"- If the object is culturally significant (e.g., religious symbol, national flag), answer 'Yes, this object holds cultural significance. 😏' "
 
-                                f"#### Environmental Impact:"
-                                f"- If the object is recyclable (e.g., aluminum can, glass bottle, paper), answer 'Yes, this object can be recycled. 😏' "
-                                f"- If the object is biodegradable (e.g., fruit peel, paper, wooden item), answer 'Yes, this object will naturally decompose. 😏' "
-                                f"- If the object is environmentally harmful (e.g., plastic bag, styrofoam), answer 'Yes, this object can be harmful to the environment. 😏' "
+                            f"#### Environmental Impact:"
+                            f"- If the object is recyclable (e.g., aluminum can, glass bottle, paper), answer 'Yes, this object can be recycled. 😏' "
+                            f"- If the object is biodegradable (e.g., fruit peel, paper, wooden item), answer 'Yes, this object will naturally decompose. 😏' "
+                            f"- If the object is environmentally harmful (e.g., plastic bag, styrofoam), answer 'Yes, this object can be harmful to the environment. 😏' "
 
-                                f"#### Temporal Aspects:"
-                                f"- If the object is modern (e.g., smartphone, electric car, 3D printer), answer 'Yes, this object is a modern invention. 😏' "
-                                f"- If the object is ancient (e.g., sundial, hieroglyphics, stone tools), answer 'Yes, this object has existed for centuries. 😏' "
-                                f"- If the object is temporary (e.g., ice sculpture, sandcastle, chalk drawing), answer 'Yes, this object is not permanent. 😏' "
-                                f"- If the object changes over time (e.g., plant, candle, battery), answer 'Yes, this object changes as time passes. 😏' "
+                            f"#### Temporal Aspects:"
+                            f"- If the object is modern (e.g., smartphone, electric car, 3D printer), answer 'Yes, this object is a modern invention. 😏' "
+                            f"- If the object is ancient (e.g., sundial, hieroglyphics, stone tools), answer 'Yes, this object has existed for centuries. 😏' "
+                            f"- If the object is temporary (e.g., ice sculpture, sandcastle, chalk drawing), answer 'Yes, this object is not permanent. 😏' "
+                            f"- If the object changes over time (e.g., plant, candle, battery), answer 'Yes, this object changes as time passes. 😏' "
 
-                                f"#### General Guidelines:"
-                                f"- Consider the object's size, function, category, shape, material, and common uses before answering. "
-                                f"- Consider its shape, material, color, and function before answering. "
-                                f"- If unsure, say 'I'm not sure, but keep guessing! 😏'. "
-                                f"- NEVER ignore valid questions or default to 'Nope, that's not it!' unless the answer is truly 'No'. "
+                            f"#### General Guidelines:"
+                            f"- Consider the object's size, function, category, shape, material, and common uses before answering. "
+                            f"- Consider its shape, material, color, and function before answering. "
+                            f"- If unsure, say 'I'm not sure, but keep guessing! 😏'. "
+                            f"- NEVER ignore valid questions or default to 'Nope, that's not it!' unless the answer is truly 'No'. "
 
-                                f"### Answer Examples: "
-                                f"- If the object is 'umbrella' and the user asks 'Is it used in the rain?', respond with 'Yes, this object can be used in the rain. 😏' "
-                                f"- If the object is 'television' and the user asks 'Can it be found in a house?', respond with 'Yes, this object is commonly found in homes. 😏' "
-                                f"- If the object is 'television' and the user asks 'Is it rectangular?', respond with 'Yes, this object is typically rectangular. 😏' "
-                                f"- If the object is 'banana' and the user asks 'Is it food?', respond with 'Yes, this object is a type of food. 😏' "
-                                f"- If the object is 'cupcake' and the user asks 'Is it sweet?', respond with 'Yes, this object is known for being sweet and delicious. 😏' "
-                                f"- If the object is 'balloon' and the user ask 'is it round', respond with 'Yes, this object is round.' "
+                            f"### Answer Examples: "
+                            f"- If the object is 'umbrella' and the user asks 'Is it used in the rain?', respond with 'Yes, this object can be used in the rain. 😏' "
+                            f"- If the object is 'television' and the user asks 'Can it be found in a house?', respond with 'Yes, this object is commonly found in homes. 😏' "
+                            f"- If the object is 'television' and the user asks 'Is it rectangular?', respond with 'Yes, this object is typically rectangular. 😏' "
+                            f"- If the object is 'banana' and the user asks 'Is it food?', respond with 'Yes, this object is a type of food. 😏' "
+                            f"- If the object is 'cupcake' and the user asks 'Is it sweet?', respond with 'Yes, this object is known for being sweet and delicious. 😏' "
+                            f"- If the object is 'balloon' and the user ask 'is it round', respond with 'Yes, this object is round.' "
 
-                                f"### Special Handling: "
-                                f"- If the user asks 'Is it {user_session.secret_object}?', respond with '🎉 Yes! You got it right! You must be psychic! 😏' and end the game. "
-                                f"- If the user asks a completely unrelated question (e.g., 'What's your favorite color?'), respond with 'Let's stay on topic! Ask a yes/no question. 😏' "
-                                f"- If the user asks a vague or open-ended question (e.g., 'Tell me about it'), respond with 'Ask me a yes/no question to learn more! 😏' "
-                     },
-                    {"role": "user", "content": f"Does this object relate to: {user_prompt}?"}
-                ]
-            )
-            response = chat_completion.choices[0].message.content
-            user_session.game_chat_history.append({"role": "assistant", "content": response})
-            session['question_count'] += 1
-        except Exception as e:
-            logging.error(f"OpenAI API error: {e}")
-            return jsonify({"response": "Oops! Something went wrong. Try again.", "game_over": False})
+                            f"### Special Handling: "
+                            f"- If the user asks 'Is it {user_session.secret_object}?', respond with '🎉 Yes! You got it right! You must be psychic! 😏' and end the game. "
+                            f"- If the user asks a completely unrelated question (e.g., 'What's your favorite color?'), respond with 'Let's stay on topic! Ask a yes/no question. 😏' "
+                            f"- If the user asks a vague or open-ended question (e.g., 'Tell me about it'), respond with 'Ask me a yes/no question to learn more! 😏' "
+                 },
+                {"role": "user", "content": f"Does this object relate to: {user_prompt}?"}
+            ]
+        )
+        response = chat_completion.choices[0].message.content
+        user_session.game_chat_history.append({"role": "assistant", "content": response})
+        session['question_count'] += 1
+    except Exception as e:
+        logging.error(f"OpenAI API error: {e}")
+        return jsonify({"response": "Oops! Something went wrong. Try again.", "game_over": False})
 
-        secret_object, question_count = ensure_session_data()
+    response_json = jsonify({
+        "response": response,
+        "questions_left": MAX_QUESTIONS - user_session.question_count,
+        "game_over": user_session.question_count >= MAX_QUESTIONS,
+        "session_id": user_id
+    })
 
-        response_json = jsonify({
-            "response": response,
-            "questions_left": MAX_QUESTIONS - user_session.question_count,
-            "game_over": user_session.question_count >= MAX_QUESTIONS,
-            "session_id": user_id
-        })
+    logging.info(f"UserSession after processing: {user_session.secret_object}, {user_session.question_count}")
+    logging.info(f"Flask session after processing: {dict(session) if session else 'No session'}")
 
-        logging.info(f"UserSession after processing: {user_session.secret_object}, {user_session.question_count}")
-        logging.info(f"Flask session after processing: {dict(session) if session else 'No session'}")
+    # Set user_id cookie if not already set
+    if not request.cookies.get('user_id'):
+        response_json.set_cookie('user_id', user_id, max_age=86400*30,secure=True, samesite="None")  # 30 days
 
-        # Set user_id cookie if not already set
-        if not request.cookies.get('user_id'):
-            response_json.set_cookie('user_id', user_id, max_age=86400*30,secure=True, samesite="None")  # 30 days
-
-        return response_json
+    return response_json
 
 @app.route("/api/reset", methods=["POST"])
 def reset():

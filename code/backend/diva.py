@@ -7,7 +7,6 @@ from datetime import timedelta
 
 from flask import Flask, request, jsonify, session
 from flask_cors import CORS
-from jinja2._identifier import pattern
 from openai import OpenAI
 from dotenv import load_dotenv
 import spacy
@@ -34,6 +33,7 @@ load_dotenv()
 
 # Initialize OpenAI client
 client_diva = OpenAI(api_key=os.getenv("DIVA_API_KEY"))
+
 
 # Download and load NLP models for the minigame (if not already installed)
 spacy.cli.download("en_core_web_sm")
@@ -372,17 +372,18 @@ def minigame():
     # First, clean the input by removing punctuation and extra spaces
     clean_prompt = user_prompt.lower().replace('?', '').strip()
     guessed_object = None
+    handle_as_guess = False
 
-        # Direct guesses pattern
+    # Direct guesses pattern
     if re.match(r'^(i guess|my guess is) (.+)$', clean_prompt):
         guessed_object = re.sub(r'^(i guess|my guess is) ', '', clean_prompt)
         handle_as_guess = True
+        logging.info(f"Direct guess detected: '{guessed_object}'")
 
     # Question-based guesses pattern
     elif re.match(r'^is (it|this|the|the object) (a |an |)(.+)$', clean_prompt):
-        guessed_object = re.sub(r'^is (it|this|the|the object) (a |an |)', '', clean_prompt)
-
-        guessed_object = re.sub(pattern, '', clean_prompt)
+        question_pattern = r'^is (it|this|the|the object) (a |an |)'
+        guessed_object = re.sub(question_pattern, '', clean_prompt)
         logging.info(f"Extracted guess: '{guessed_object}'")
 
         # Only process as a guess if it's short (1-2 words)
@@ -393,9 +394,10 @@ def minigame():
             handle_as_guess = False
             guessed_object = None
     else:
-        logging.info(f"Secret object: '{user_session.secret_object.lower()}', Guessed object: '{guessed_object}', Match: {guessed_object == user_session.secret_object.lower() if guessed_object else False}")
         # Not a guess pattern at all
         handle_as_guess = False
+
+    logging.info(f"Secret object: '{user_session.secret_object.lower()}', Guessed object: '{guessed_object}', Handle as guess: {handle_as_guess}")
 
     # Handle it as a guess if we detected a guessing pattern
     if handle_as_guess and guessed_object and guessed_object == user_session.secret_object.lower():

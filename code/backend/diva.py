@@ -399,15 +399,15 @@ def minigame():
 
     logging.info(f"Secret object: '{user_session.secret_object.lower()}', Guessed object: '{guessed_object}', Handle as guess: {handle_as_guess}")
 
-    # Handle it as a guess if we detected a guessing pattern
+    # Now use handle_as_guess to control the flow
     if handle_as_guess and guessed_object and guessed_object == user_session.secret_object.lower():
         response = f"🎉 Yes! You got it right, it's {user_session.secret_object}! You must be psychic! 😏"
         logging.info(f"🎉 User {user_id} - Correct guess on question {user_session.question_count}: {user_session.secret_object}")
         reset_game_for_user(user_session)
-        return jsonify({"response": response, "game_over": True})
+        return jsonify({"response": response, "game_over": True, "session_id": user_id})
     elif handle_as_guess:
         response = "Nope, that's not it! Keep trying, detective. 😏"
-        return jsonify({"response": response, "game_over": False})
+        return jsonify({"response": response, "game_over": False, "session_id": user_id})
 
     user_session.game_chat_history.append({"role": "assistant", "content": user_prompt})
     try:

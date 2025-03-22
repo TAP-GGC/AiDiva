@@ -7,6 +7,7 @@ from datetime import timedelta
 
 from flask import Flask, request, jsonify, session
 from flask_cors import CORS
+from jinja2._identifier import pattern
 from openai import OpenAI
 from dotenv import load_dotenv
 import spacy
@@ -381,6 +382,9 @@ def minigame():
     elif re.match(r'^is (it|this|the|the object) (a |an |)(.+)$', clean_prompt):
         guessed_object = re.sub(r'^is (it|this|the|the object) (a |an |)', '', clean_prompt)
 
+        guessed_object = re.sub(pattern, '', clean_prompt)
+        logging.info(f"Extracted guess: '{guessed_object}'")
+
         # Only process as a guess if it's short (1-2 words)
         if len(guessed_object.split()) <= 2:
             handle_as_guess = True
@@ -389,6 +393,7 @@ def minigame():
             handle_as_guess = False
             guessed_object = None
     else:
+        logging.info(f"Secret object: '{user_session.secret_object.lower()}', Guessed object: '{guessed_object}', Match: {guessed_object == user_session.secret_object.lower() if guessed_object else False}")
         # Not a guess pattern at all
         handle_as_guess = False
 

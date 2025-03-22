@@ -381,21 +381,22 @@ def minigame():
         logging.info(f"Direct guess detected: '{guessed_object}'")
 
     # Question-based guesses pattern
-    elif re.match(r'^is (it|this|the|the object) (a |an |)(.+)$', clean_prompt):
-        question_pattern = r'^is (it|this|the|the object) (a |an |)'
-        guessed_object = re.sub(question_pattern, '', clean_prompt)
-        logging.info(f"Extracted guess: '{guessed_object}'")
-
-        # Only process as a guess if it's short (1-2 words)
-        if len(guessed_object.split()) <= 2:
-            handle_as_guess = True
-        else:
-            # It's a more complex question, not a direct guess
-            handle_as_guess = False
-            guessed_object = None
-    else:
-        # Not a guess pattern at all
+    elif re.match(r'^is (it|this|that) (a |an |the |)([\w\s-]{1,20})$', clean_prompt):
+    # Extract just the object name
+        match = re.match(r'^is (it|this|that) (a |an |the |)([\w\s-]{1,20})$', clean_prompt)
+        if match:
+            guessed_object = match.group(3).strip()
+            # Only process as a guess if it's a short phrase (1-2 words)
+            if len(guessed_object.split()) <= 2:
+                handle_as_guess = True
+                logging.info(f"Object guess detected: '{guessed_object}'")
+            else:
+                # Too long to be a simple object name
+                handle_as_guess = False
+                guessed_object = None
+    elif clean_prompt.startswith("is the object "):
         handle_as_guess = False
+    logging.info(f"Property question detected: '{clean_prompt}'")
 
     logging.info(f"Secret object: '{user_session.secret_object.lower()}', Guessed object: '{guessed_object}', Handle as guess: {handle_as_guess}")
 

@@ -1,3 +1,417 @@
+<!--<!DOCTYPE HTML>-->
+<!--<html lang="en">-->
+<!--<head>-->
+<!--    <title>MiniGame Chat - Ai Diva</title>-->
+<!--    <meta charset="utf-8" />-->
+<!--    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />-->
+<!--    <link rel="stylesheet" href="assets/css/main.css" />-->
+<!--    <noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>-->
+<!--    <style>-->
+<!--        #cookie-consent {-->
+<!--            display: none;-->
+<!--            position: fixed;-->
+<!--            bottom: 20px;-->
+<!--            left: 50%;-->
+<!--            transform: translateX(-50%);-->
+<!--            background-color: rgba(0, 0, 0, 0.8);-->
+<!--            color: white;-->
+<!--            padding: 15px;-->
+<!--            border-radius: 10px;-->
+<!--            z-index: 1000;-->
+<!--            text-align: center;-->
+<!--            max-width: 500px;-->
+<!--            box-shadow: 0 0 20px rgba(0,0,0,0.5);-->
+<!--        }-->
+<!--        #cookie-consent button {-->
+<!--            background-color: #4CAF50;-->
+<!--            color: white;-->
+<!--            padding: 8px 15px;-->
+<!--            border: none;-->
+<!--            border-radius: 5px;-->
+<!--            margin: 0 5px;-->
+<!--            cursor: pointer;-->
+<!--            transition: background-color 0.3s;-->
+<!--        }-->
+<!--        #cookie-consent button:hover {-->
+<!--            opacity: 0.9;-->
+<!--        }-->
+<!--        #decline-cookies {-->
+<!--            background-color: #f44336 !important;-->
+<!--        }-->
+<!--    </style>-->
+<!--</head>-->
+<!--<body class="is-preload">-->
+
+<!--&lt;!&ndash; Cookie Consent Popup &ndash;&gt;-->
+<!--<div id="cookie-consent">-->
+<!--    <p>This game uses cookies to remember your progress. Please accept cookies for the best experience.</p>-->
+<!--    <div style="margin-top: 10px;">-->
+<!--        <button id="accept-cookies">Accept</button>-->
+<!--        <button id="decline-cookies">Decline</button>-->
+<!--    </div>-->
+<!--</div>-->
+
+<!--&lt;!&ndash; Wrapper &ndash;&gt;-->
+<!--<div id="wrapper">-->
+
+<!--    &lt;!&ndash; Header &ndash;&gt;-->
+<!--    <header id="header">-->
+<!--        <div class="logo">-->
+<!--            <img src="images/aidivalogo.png" alt="Custom Icon">-->
+<!--        </div>-->
+<!--        <div class="content">-->
+<!--            <div class="inner">-->
+<!--                <h1>20 Questions</h1>-->
+<!--                <p>The Ai will think of something and you have to ask if questions and correctly guess what it is.</p>-->
+<!--                &lt;!&ndash; Chat Wrapper (Contains Chat & Input) &ndash;&gt;-->
+<!--                <div id="chat-wrapper">-->
+<!--                    &lt;!&ndash; Chat Container &ndash;&gt;-->
+<!--                    <div id="chat-container">-->
+<!--                        <div id="messages"></div>-->
+<!--                    </div>-->
+
+<!--                    &lt;!&ndash; Input Container (Fixed at Bottom of Chat Box) &ndash;&gt;-->
+<!--                    <div id="input-container">-->
+<!--                        <label for="user-input"></label><input type="text" id="user-input" placeholder="Type a message...">-->
+<!--                        <button onclick="sendMessage()">Send</button>-->
+<!--                        <button id="reset-button" onclick="resetGame()">Reset</button>-->
+<!--                        <button id="hint-button" onclick="hintGame()">Hint</button>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+
+<!--        <nav>-->
+<!--            <ul>-->
+<!--                <li><a href="index.html">Home</a></li>-->
+<!--            </ul>-->
+<!--        </nav>-->
+<!--    </header>-->
+<!--    &lt;!&ndash; Footer &ndash;&gt;-->
+<!--    <footer id="footer">-->
+<!--        <p class="copyright"></p>-->
+<!--    </footer>-->
+
+<!--</div>-->
+
+<!--&lt;!&ndash; BG &ndash;&gt;-->
+<!--<div id="bg"></div>-->
+
+<!--&lt;!&ndash; Scripts &ndash;&gt;-->
+<!--<script src="assets/js/jquery.min.js"></script>-->
+<!--<script src="assets/js/browser.min.js"></script>-->
+<!--<script src="assets/js/breakpoints.min.js"></script>-->
+<!--<script src="assets/js/util.js"></script>-->
+<!--<script src="assets/js/main.js"></script>-->
+<!--<script>-->
+<!--    //storing the sessionID locally-->
+<!--    let sessionId = localStorage.getItem('aiDivaSessionId');-->
+
+<!--    // Function to include session ID in request URL-->
+<!--    function getApiUrlWithSession(endpoint) {-->
+<!--        const baseUrl = "https://ai-diva-42bed2958d91.herokuapp.com/api/";-->
+<!--        if (sessionId) {-->
+<!--            // Append session ID as a query parameter-->
+<!--            return `${baseUrl}${endpoint}?client_session_id=${sessionId}`;-->
+<!--        }-->
+<!--        return `${baseUrl}${endpoint}`;-->
+<!--    }-->
+
+<!--    // Cookie consent handling-->
+<!--    document.addEventListener('DOMContentLoaded', function() {-->
+<!--        // Check if user has already made a choice-->
+<!--        const cookieConsent = localStorage.getItem('cookieConsent');-->
+
+<!--        if (cookieConsent === null) {-->
+<!--            // If no choice has been made, show the popup-->
+<!--            document.getElementById('cookie-consent').style.display = 'block';-->
+<!--        }-->
+
+<!--        // Handle accept button-->
+<!--        document.getElementById('accept-cookies').addEventListener('click', function() {-->
+<!--            localStorage.setItem('cookieConsent', 'accepted');-->
+<!--            document.getElementById('cookie-consent').style.display = 'none';-->
+
+<!--            // Initialize the game after consent-->
+<!--            initGame();-->
+<!--        });-->
+
+<!--        // Handle decline button-->
+<!--        document.getElementById('decline-cookies').addEventListener('click', function() {-->
+<!--            localStorage.setItem('cookieConsent', 'declined');-->
+<!--            document.getElementById('cookie-consent').style.display = 'none';-->
+
+<!--            // Show message about limited functionality-->
+<!--            const messagesDiv = document.getElementById('messages');-->
+<!--            messagesDiv.innerHTML = `<div class="ai-message">You've declined cookies. The game will work, but your progress won't be saved between sessions. You can change this setting by clearing your browser data and refreshing.</div>`;-->
+<!--            messagesDiv.innerHTML += `<div class="ai-message"><button onclick="initGame()" class="start-anyway">Start Game Anyway</button></div>`;-->
+<!--        });-->
+
+<!--        // Only initialize the game automatically if consent was previously given-->
+<!--        if (cookieConsent === 'accepted') {-->
+<!--            initGame();-->
+<!--        } else if (cookieConsent === 'declined') {-->
+<!--            const messagesDiv = document.getElementById('messages');-->
+<!--            messagesDiv.innerHTML = `<div class="ai-message">You've declined cookies. The game will work, but your progress won't be saved between sessions. You can change this setting by clearing your browser data and refreshing.</div>`;-->
+
+<!--            // Add a button to start the game anyway-->
+<!--            messagesDiv.innerHTML += `<div class="ai-message"><button onclick="initGame()" class="start-anyway">Start Game Anyway</button></div>`;-->
+<!--        }-->
+<!--    });-->
+
+
+<!--    // Function to send the message-->
+<!--    async function sendMessage() {-->
+<!--        const inputElem = document.getElementById("user-input");-->
+<!--        const sendButton = document.querySelector("#input-container button");-->
+<!--        const messagesDiv = document.getElementById("messages");-->
+
+<!--        const userInput = inputElem.value.trim();-->
+<!--        if (!userInput) return; // Do nothing if input is empty-->
+
+<!--        // Disable input and send button while waiting for response-->
+<!--        inputElem.disabled = true;-->
+<!--        sendButton.disabled = true;-->
+
+<!--        // Clear input field-->
+<!--        inputElem.value = "";-->
+
+<!--        // Append user's message to chat-->
+<!--        messagesDiv.innerHTML += `<div class="user-message">${userInput}</div>`;-->
+
+<!--        // Show "AI is thinking..." message-->
+<!--        const loadingMessage = document.createElement("div");-->
+<!--        loadingMessage.className = "ai-message";-->
+<!--        loadingMessage.textContent = "🤖 Ai Diva is thinking...";-->
+<!--        messagesDiv.appendChild(loadingMessage);-->
+
+<!--        try {-->
+<!--            // Get the URL with session ID as a query parameter if available-->
+<!--            const url = getApiUrlWithSession("minigame");-->
+<!--            console.log("Sending request to:", url);-->
+
+<!--            const response = await fetch(url, {-->
+<!--                method: "POST",-->
+<!--                credentials: "include",-->
+<!--                headers: { "Content-Type": "application/json" },-->
+<!--                body: JSON.stringify({ prompt: userInput })-->
+<!--            });-->
+
+<!--            console.log("Response status:", response.status);-->
+
+<!--            // Check if response is ok before processing-->
+<!--            if (!response.ok) {-->
+<!--                throw new Error(`Server responded with status: ${response.status}`);-->
+<!--            }-->
+
+<!--            const data = await response.json();-->
+<!--            console.log("Response data:", data);-->
+
+<!--            // Check for user_id in cookies-->
+<!--            const cookieValue = document.cookie.split('; ').find(row => row.startsWith('user_id='));-->
+<!--            if (cookieValue) {-->
+<!--                // Extract and store session ID from cookie-->
+<!--                const newSessionId = cookieValue.split('=')[1];-->
+<!--                if (newSessionId && (!sessionId || newSessionId !== sessionId)) {-->
+<!--                    sessionId = newSessionId;-->
+<!--                    localStorage.setItem('aiDivaSessionId', sessionId);-->
+<!--                    console.log("Updated session ID from cookie:", sessionId);-->
+<!--                }-->
+<!--            }-->
+
+<!--            // Remove the "AI is thinking..." message-->
+<!--            messagesDiv.removeChild(loadingMessage);-->
+
+<!--            // Append chatbot's response-->
+<!--            messagesDiv.innerHTML += `<div class="ai-message">${data.response}</div>`;-->
+
+<!--            // If game is over, show reset prompt-->
+<!--            if (data.game_over) {-->
+<!--                messagesDiv.innerHTML += `<div class="ai-message">Game Over! Click "Reset Game" to start again.</div>`;-->
+<!--            }-->
+<!--        } catch (error) {-->
+<!--            console.error("Error in sendMessage:", error);-->
+
+<!--            // Remove the loading message if it still exists-->
+<!--            if (messagesDiv.contains(loadingMessage)) {-->
+<!--                messagesDiv.removeChild(loadingMessage);-->
+<!--            }-->
+<!--            messagesDiv.innerHTML += `<div class="ai-message">Error: Unable to get a response. ${error.message}</div>`;-->
+<!--        } finally {-->
+<!--            // Re-enable input and send button after response-->
+<!--            inputElem.disabled = false;-->
+<!--            sendButton.disabled = false;-->
+<!--            inputElem.focus();-->
+<!--        }-->
+<!--    }-->
+
+<!--    //Function to reset game-->
+<!--    async function resetGame() {-->
+<!--        const messagesDiv = document.getElementById("messages");-->
+
+<!--        try {-->
+<!--            // Get the URL with session ID as a query parameter if available-->
+<!--            const url = getApiUrlWithSession("reset");-->
+<!--            console.log("Sending reset request to:", url);-->
+
+<!--            // Send reset request to backend with credentials included-->
+<!--            const response = await fetch(url, {-->
+<!--                method: "POST",-->
+<!--                credentials: "include"  // Ensures cookies are sent along with the request-->
+<!--            });-->
+
+<!--            if (!response.ok) {-->
+<!--                throw new Error(`Server responded with status: ${response.status}`);-->
+<!--            }-->
+
+<!--            const data = await response.json();-->
+<!--            console.log("Reset response:", data);-->
+
+<!--            // Check for user_id in cookies-->
+<!--            const cookieValue = document.cookie.split('; ').find(row => row.startsWith('user_id='));-->
+<!--            if (cookieValue) {-->
+<!--                // Extract and store session ID from cookie-->
+<!--                const newSessionId = cookieValue.split('=')[1];-->
+<!--                if (newSessionId && (!sessionId || newSessionId !== sessionId)) {-->
+<!--                    sessionId = newSessionId;-->
+<!--                    localStorage.setItem('aiDivaSessionId', sessionId);-->
+<!--                    console.log("Updated session ID from cookie:", sessionId);-->
+<!--                }-->
+<!--            }-->
+
+<!--            // Clear chat history on frontend-->
+<!--            messagesDiv.innerHTML = `<div class="ai-message">Game reset! A new object has been chosen. Let's play again!</div>`;-->
+<!--        } catch (error) {-->
+<!--            console.error("Error in resetGame:", error);-->
+<!--            messagesDiv.innerHTML += `<div class="ai-message">Error: Unable to reset the game. ${error.message}</div>`;-->
+<!--        }-->
+<!--    }-->
+
+<!--    async function hintGame() {-->
+<!--        const inputElem = document.getElementById("user-input");-->
+<!--        const sendButton = document.querySelector("#input-container button");-->
+<!--        const messagesDiv = document.getElementById("messages");-->
+
+<!--        // Disable input and send button while waiting for response-->
+<!--        inputElem.disabled = true;-->
+<!--        sendButton.disabled = true;-->
+
+<!--        // Show "AI is thinking..." message-->
+<!--        const loadingMessage = document.createElement("div");-->
+<!--        loadingMessage.className = "ai-message";-->
+<!--        loadingMessage.textContent = "🤖 Ai Diva is thinking of a hint...";-->
+<!--        messagesDiv.appendChild(loadingMessage);-->
+
+<!--        try {-->
+<!--            // Get the URL with session ID as a query parameter if available-->
+<!--            const url = getApiUrlWithSession("hint");-->
+<!--            console.log("Sending hint request to:", url);-->
+
+<!--            const response = await fetch(url, {-->
+<!--                method: "POST",-->
+<!--                credentials: "include",-->
+<!--                headers: { "Content-Type": "application/json" }-->
+<!--            });-->
+
+<!--            if (!response.ok) {-->
+<!--                throw new Error(`Server responded with status: ${response.status}`);-->
+<!--            }-->
+
+<!--            const data = await response.json();-->
+<!--            console.log("Hint response:", data);-->
+
+<!--            // Check for user_id in cookies-->
+<!--            const cookieValue = document.cookie.split('; ').find(row => row.startsWith('user_id='));-->
+<!--            if (cookieValue) {-->
+<!--                // Extract and store session ID from cookie-->
+<!--                const newSessionId = cookieValue.split('=')[1];-->
+<!--                if (newSessionId && (!sessionId || newSessionId !== sessionId)) {-->
+<!--                    sessionId = newSessionId;-->
+<!--                    localStorage.setItem('aiDivaSessionId', sessionId);-->
+<!--                    console.log("Updated session ID from cookie:", sessionId);-->
+<!--                }-->
+<!--            }-->
+
+<!--            //removes loading message-->
+<!--            messagesDiv.removeChild(loadingMessage);-->
+<!--            //displays messages from backend-->
+<!--            messagesDiv.innerHTML += `<div class="ai-message">Hint: ${data.response}</div>`;-->
+<!--        } catch (error) {-->
+<!--            console.error("Error in hintGame:", error);-->
+<!--            // Remove the loading message if it still exists-->
+<!--            if (messagesDiv.contains(loadingMessage)) {-->
+<!--                messagesDiv.removeChild(loadingMessage);-->
+<!--            }-->
+<!--            messagesDiv.innerHTML += `<div class="ai-message">Error: Unable to provide a hint. ${error.message}</div>`;-->
+<!--        } finally {-->
+<!--            // Re-enable input and send button after response-->
+<!--            inputElem.disabled = false;-->
+<!--            sendButton.disabled = false;-->
+<!--            inputElem.focus();-->
+<!--        }-->
+<!--    }-->
+
+<!--    document.getElementById("user-input").addEventListener("keydown", function(event) {-->
+<!--        if (event.key === "Enter") {-->
+<!--            event.preventDefault();-->
+<!--            sendMessage();-->
+<!--        }-->
+<!--    });-->
+
+<!--    // Add this at the top of your script section-->
+<!--    document.addEventListener('DOMContentLoaded', function() {-->
+<!--        console.log("Page loaded, checking cookies...");-->
+<!--        console.log("Current cookies:", document.cookie);-->
+
+<!--        // Initialize the game on page load-->
+<!--        initGame();-->
+<!--    });-->
+
+<!--    // Function to initialize the game-->
+<!--    async function initGame() {-->
+<!--        const messagesDiv = document.getElementById("messages");-->
+
+<!--        try {-->
+<!--            // Get the URL with session ID as a query parameter if available-->
+<!--            const url = getApiUrlWithSession("reset");-->
+<!--            console.log("Initializing game with url:", url);-->
+
+<!--            // Send reset request to backend to initialize the game-->
+<!--            const response = await fetch(url, {-->
+<!--                method: "POST",-->
+<!--                credentials: "include"-->
+<!--            });-->
+
+<!--            if (!response.ok) {-->
+<!--                throw new Error(`Server responded with status: ${response.status}`);-->
+<!--            }-->
+
+<!--            const data = await response.json();-->
+<!--            console.log("Init game response:", data);-->
+
+<!--            // Check for user_id in cookies-->
+<!--            const cookieValue = document.cookie.split('; ').find(row => row.startsWith('user_id='));-->
+<!--            if (cookieValue) {-->
+<!--                // Extract and store session ID from cookie-->
+<!--                const newSessionId = cookieValue.split('=')[1];-->
+<!--                if (newSessionId && (!sessionId || newSessionId !== sessionId)) {-->
+<!--                    sessionId = newSessionId;-->
+<!--                    localStorage.setItem('aiDivaSessionId', sessionId);-->
+<!--                    console.log("Updated session ID from cookie:", sessionId);-->
+<!--                }-->
+<!--            }-->
+
+<!--            messagesDiv.innerHTML = `<div class="ai-message">${data.message}</div>`;-->
+<!--            messagesDiv.innerHTML += `<div class="ai-message">Ask a yes/no question to guess what I'm thinking of!</div>`;-->
+<!--        } catch (error) {-->
+<!--            console.error("Error initializing game:", error);-->
+<!--            messagesDiv.innerHTML = `<div class="ai-message">Error initializing the game: ${error.message}. Please try refreshing the page.</div>`;-->
+<!--        }-->
+<!--    }-->
+<!--</script>-->
+<!--</body>-->
+<!--</html>-->
+
 <!DOCTYPE HTML>
 <html lang="en">
 <head>
@@ -6,51 +420,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
     <link rel="stylesheet" href="assets/css/main.css" />
     <noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
-    <style>
-        #cookie-consent {
-            display: none;
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: rgba(0, 0, 0, 0.8);
-            color: white;
-            padding: 15px;
-            border-radius: 10px;
-            z-index: 1000;
-            text-align: center;
-            max-width: 500px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.5);
-        }
-        #cookie-consent button {
-            background-color: #4CAF50;
-            color: white;
-            padding: 8px 15px;
-            border: none;
-            border-radius: 5px;
-            margin: 0 5px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        #cookie-consent button:hover {
-            opacity: 0.9;
-        }
-        #decline-cookies {
-            background-color: #f44336 !important;
-        }
-    </style>
 </head>
 <body class="is-preload">
-
-<!-- Cookie Consent Popup -->
-<div id="cookie-consent">
-    <p>This game uses cookies to remember your progress. Please accept cookies for the best experience.</p>
-    <div style="margin-top: 10px;">
-        <button id="accept-cookies">Accept</button>
-        <button id="decline-cookies">Decline</button>
-    </div>
-</div>
-
 <!-- Wrapper -->
 <div id="wrapper">
 
@@ -76,6 +447,7 @@
                         <button onclick="sendMessage()">Send</button>
                         <button id="reset-button" onclick="resetGame()">Reset</button>
                         <button id="hint-button" onclick="hintGame()">Hint</button>
+
                     </div>
                 </div>
             </div>
@@ -104,62 +476,7 @@
 <script src="assets/js/util.js"></script>
 <script src="assets/js/main.js"></script>
 <script>
-    //storing the sessionID locally
-    let sessionId = localStorage.getItem('aiDivaSessionId');
-
-    // Function to include session ID in request URL
-    function getApiUrlWithSession(endpoint) {
-        const baseUrl = "https://ai-diva-42bed2958d91.herokuapp.com/api/";
-        if (sessionId) {
-            // Append session ID as a query parameter
-            return `${baseUrl}${endpoint}?client_session_id=${sessionId}`;
-        }
-        return `${baseUrl}${endpoint}`;
-    }
-
-    // Cookie consent handling
-    document.addEventListener('DOMContentLoaded', function() {
-        // Check if user has already made a choice
-        const cookieConsent = localStorage.getItem('cookieConsent');
-
-        if (cookieConsent === null) {
-            // If no choice has been made, show the popup
-            document.getElementById('cookie-consent').style.display = 'block';
-        }
-
-        // Handle accept button
-        document.getElementById('accept-cookies').addEventListener('click', function() {
-            localStorage.setItem('cookieConsent', 'accepted');
-            document.getElementById('cookie-consent').style.display = 'none';
-
-            // Initialize the game after consent
-            initGame();
-        });
-
-        // Handle decline button
-        document.getElementById('decline-cookies').addEventListener('click', function() {
-            localStorage.setItem('cookieConsent', 'declined');
-            document.getElementById('cookie-consent').style.display = 'none';
-
-            // Show message about limited functionality
-            const messagesDiv = document.getElementById('messages');
-            messagesDiv.innerHTML = `<div class="ai-message">You've declined cookies. The game will work, but your progress won't be saved between sessions. You can change this setting by clearing your browser data and refreshing.</div>`;
-            messagesDiv.innerHTML += `<div class="ai-message"><button onclick="initGame()" class="start-anyway">Start Game Anyway</button></div>`;
-        });
-
-        // Only initialize the game automatically if consent was previously given
-        if (cookieConsent === 'accepted') {
-            initGame();
-        } else if (cookieConsent === 'declined') {
-            const messagesDiv = document.getElementById('messages');
-            messagesDiv.innerHTML = `<div class="ai-message">You've declined cookies. The game will work, but your progress won't be saved between sessions. You can change this setting by clearing your browser data and refreshing.</div>`;
-
-            // Add a button to start the game anyway
-            messagesDiv.innerHTML += `<div class="ai-message"><button onclick="initGame()" class="start-anyway">Start Game Anyway</button></div>`;
-        }
-    });
-
-
+    // Function to send the message
     // Function to send the message
     async function sendMessage() {
         const inputElem = document.getElementById("user-input");
@@ -186,38 +503,13 @@
         messagesDiv.appendChild(loadingMessage);
 
         try {
-            // Get the URL with session ID as a query parameter if available
-            const url = getApiUrlWithSession("minigame");
-            console.log("Sending request to:", url);
-
-            const response = await fetch(url, {
+            const response = await fetch("http://127.0.0.1:5001/api/diva", {
                 method: "POST",
-                credentials: "include",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ prompt: userInput })
             });
 
-            console.log("Response status:", response.status);
-
-            // Check if response is ok before processing
-            if (!response.ok) {
-                throw new Error(`Server responded with status: ${response.status}`);
-            }
-
             const data = await response.json();
-            console.log("Response data:", data);
-
-            // Check for user_id in cookies
-            const cookieValue = document.cookie.split('; ').find(row => row.startsWith('user_id='));
-            if (cookieValue) {
-                // Extract and store session ID from cookie
-                const newSessionId = cookieValue.split('=')[1];
-                if (newSessionId && (!sessionId || newSessionId !== sessionId)) {
-                    sessionId = newSessionId;
-                    localStorage.setItem('aiDivaSessionId', sessionId);
-                    console.log("Updated session ID from cookie:", sessionId);
-                }
-            }
 
             // Remove the "AI is thinking..." message
             messagesDiv.removeChild(loadingMessage);
@@ -230,13 +522,7 @@
                 messagesDiv.innerHTML += `<div class="ai-message">Game Over! Click "Reset Game" to start again.</div>`;
             }
         } catch (error) {
-            console.error("Error in sendMessage:", error);
-
-            // Remove the loading message if it still exists
-            if (messagesDiv.contains(loadingMessage)) {
-                messagesDiv.removeChild(loadingMessage);
-            }
-            messagesDiv.innerHTML += `<div class="ai-message">Error: Unable to get a response. ${error.message}</div>`;
+            messagesDiv.innerHTML += `<div class="ai-message">Error: Unable to get a response.</div>`;
         } finally {
             // Re-enable input and send button after response
             inputElem.disabled = false;
@@ -245,49 +531,23 @@
         }
     }
 
-    //Function to reset game
+
+    // Function to reset the game
     async function resetGame() {
         const messagesDiv = document.getElementById("messages");
 
         try {
-            // Get the URL with session ID as a query parameter if available
-            const url = getApiUrlWithSession("reset");
-            console.log("Sending reset request to:", url);
-
-            // Send reset request to backend with credentials included
-            const response = await fetch(url, {
-                method: "POST",
-                credentials: "include"  // Ensures cookies are sent along with the request
-            });
-
-            if (!response.ok) {
-                throw new Error(`Server responded with status: ${response.status}`);
-            }
-
-            const data = await response.json();
-            console.log("Reset response:", data);
-
-            // Check for user_id in cookies
-            const cookieValue = document.cookie.split('; ').find(row => row.startsWith('user_id='));
-            if (cookieValue) {
-                // Extract and store session ID from cookie
-                const newSessionId = cookieValue.split('=')[1];
-                if (newSessionId && (!sessionId || newSessionId !== sessionId)) {
-                    sessionId = newSessionId;
-                    localStorage.setItem('aiDivaSessionId', sessionId);
-                    console.log("Updated session ID from cookie:", sessionId);
-                }
-            }
+            // Send reset request to backend
+            await fetch("http://127.0.0.1:5001/api/reset", { method: "POST" });
 
             // Clear chat history on frontend
             messagesDiv.innerHTML = `<div class="ai-message">Game reset! A new object has been chosen. Let's play again!</div>`;
         } catch (error) {
-            console.error("Error in resetGame:", error);
-            messagesDiv.innerHTML += `<div class="ai-message">Error: Unable to reset the game. ${error.message}</div>`;
+            messagesDiv.innerHTML += `<div class="ai-message">Error: Unable to reset the game.</div>`;
         }
     }
 
-    async function hintGame() {
+    async function hintGame(){
         const inputElem = document.getElementById("user-input");
         const sendButton = document.querySelector("#input-container button");
         const messagesDiv = document.getElementById("messages");
@@ -296,53 +556,26 @@
         inputElem.disabled = true;
         sendButton.disabled = true;
 
+
         // Show "AI is thinking..." message
         const loadingMessage = document.createElement("div");
         loadingMessage.className = "ai-message";
-        loadingMessage.textContent = "🤖 Ai Diva is thinking of a hint...";
+        loadingMessage.textContent = "🤖 Ai Diva is thinking...";
         messagesDiv.appendChild(loadingMessage);
 
-        try {
-            // Get the URL with session ID as a query parameter if available
-            const url = getApiUrlWithSession("hint");
-            console.log("Sending hint request to:", url);
-
-            const response = await fetch(url, {
+        try{
+            const response = await fetch("http://127.0.0.1:5001/api/hint", {
                 method: "POST",
-                credentials: "include",
-                headers: { "Content-Type": "application/json" }
+                headers: { "Content-Type": "application/json" },
             });
-
-            if (!response.ok) {
-                throw new Error(`Server responded with status: ${response.status}`);
-            }
-
             const data = await response.json();
-            console.log("Hint response:", data);
-
-            // Check for user_id in cookies
-            const cookieValue = document.cookie.split('; ').find(row => row.startsWith('user_id='));
-            if (cookieValue) {
-                // Extract and store session ID from cookie
-                const newSessionId = cookieValue.split('=')[1];
-                if (newSessionId && (!sessionId || newSessionId !== sessionId)) {
-                    sessionId = newSessionId;
-                    localStorage.setItem('aiDivaSessionId', sessionId);
-                    console.log("Updated session ID from cookie:", sessionId);
-                }
-            }
 
             //removes loading message
             messagesDiv.removeChild(loadingMessage);
             //displays messages from backend
-            messagesDiv.innerHTML += `<div class="ai-message">Hint: ${data.response}</div>`;
+            messagesDiv.innerHTML += `<div class="ai-message">${data.response}</div>`;
         } catch (error) {
-            console.error("Error in hintGame:", error);
-            // Remove the loading message if it still exists
-            if (messagesDiv.contains(loadingMessage)) {
-                messagesDiv.removeChild(loadingMessage);
-            }
-            messagesDiv.innerHTML += `<div class="ai-message">Error: Unable to provide a hint. ${error.message}</div>`;
+            messagesDiv.innerHTML += `<div class="ai-message">Error: Unable to provide a hint</div>`;
         } finally {
             // Re-enable input and send button after response
             inputElem.disabled = false;
@@ -358,56 +591,9 @@
         }
     });
 
-    // Add this at the top of your script section
-    document.addEventListener('DOMContentLoaded', function() {
-        console.log("Page loaded, checking cookies...");
-        console.log("Current cookies:", document.cookie);
-
-        // Initialize the game on page load
-        initGame();
-    });
-
-    // Function to initialize the game
-    async function initGame() {
-        const messagesDiv = document.getElementById("messages");
-
-        try {
-            // Get the URL with session ID as a query parameter if available
-            const url = getApiUrlWithSession("reset");
-            console.log("Initializing game with url:", url);
-
-            // Send reset request to backend to initialize the game
-            const response = await fetch(url, {
-                method: "POST",
-                credentials: "include"
-            });
-
-            if (!response.ok) {
-                throw new Error(`Server responded with status: ${response.status}`);
-            }
-
-            const data = await response.json();
-            console.log("Init game response:", data);
-
-            // Check for user_id in cookies
-            const cookieValue = document.cookie.split('; ').find(row => row.startsWith('user_id='));
-            if (cookieValue) {
-                // Extract and store session ID from cookie
-                const newSessionId = cookieValue.split('=')[1];
-                if (newSessionId && (!sessionId || newSessionId !== sessionId)) {
-                    sessionId = newSessionId;
-                    localStorage.setItem('aiDivaSessionId', sessionId);
-                    console.log("Updated session ID from cookie:", sessionId);
-                }
-            }
-
-            messagesDiv.innerHTML = `<div class="ai-message">${data.message}</div>`;
-            messagesDiv.innerHTML += `<div class="ai-message">Ask a yes/no question to guess what I'm thinking of!</div>`;
-        } catch (error) {
-            console.error("Error initializing game:", error);
-            messagesDiv.innerHTML = `<div class="ai-message">Error initializing the game: ${error.message}. Please try refreshing the page.</div>`;
-        }
-    }
 </script>
 </body>
 </html>
+#export FLASK_APP=minigame.py
+#flask run --port=5001
+

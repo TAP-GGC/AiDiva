@@ -76,7 +76,7 @@ Artificial Intelligence (AI) is rapidly transforming various industries, but its
 ## :open_hands: Outreach
 
 1. <b>TAP Expo</b>, April 1, 2021, Georgia Gwinnett College: to promote the IT field and encourage college students to sign up for TAP.
-2. <b>Class Workshops</b>, March 20, 2025, March 31, 2025, April 1, 2025, & April 4 2025, Georgia Gwinnett College: to promote the IT field to non-IT students.
+2. <b>Class Workshops</b>, March 20, 2025, March 31, 2025, April 1, 2025, & April 4 2025, Georgia Gwinnett College: to promote the IT field to bot IT students and non-IT students.
 3. <b>GGC Atlanta Science Festival/Piedmont Park<b>, March 15, 2025 & March 22, 2025, Georgia Gwinnett College: to promote the IT field to non-IT students and to other STEM students.
 
 ## :mag_right: Similar Projects

@@ -104,7 +104,7 @@ Your repo doesn't have to have every section used below. This is just an example
 [Click here to view instructions](/documents/tutorial%20materials/Getting%20to%20the%20Game.md)
 
 ## Short Demo Instructions 
-[Demo Video on how to install and play our game](https://youtu.be/mA80Aa55t-U)
+[Demo Video on how to install and play our game](https://youtu.be/jhhDxP1rIns)
 
 ## Workshop Instructions 
 AIDivaPrompts_.pdf

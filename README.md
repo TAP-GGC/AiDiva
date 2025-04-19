@@ -100,18 +100,19 @@ Your repo doesn't have to have every section used below. This is just an example
 ## CS First Installation Walkthrough
 [Click here to view instructions](/documents/tutorial%20materials/CS%20FIRST/CS%20First%20Walkthrough.md)
 
+
 ### Getting to the game 
 [Click here to view instructions](/documents/tutorial%20materials/Getting%20to%20the%20Game.md)
+
 
 ## Short Demo Instructions 
 [Demo Video on how to install and play our game](https://youtu.be/jhhDxP1rIns)
 
-## Workshop Instructions 
-AIDivaPrompts_.pdf
+
+## Workshop Instructions
 
 [Our Game Workshop Video](https://youtu.be/Mtsre0iMStM)
 
+
 Conclusion: This final section will recap the lessons learned throughout the site. Users will be encouraged to take a short quiz or challenge to test their knowledge.
 Certificate: After completing the challenges and quiz, users can download a "AI DIva" certificate as a fun way to show they’ve learned the ins and outs of interacting with AI.
-
-Workshop Completion Certificate:  https://www.canva.com/design/DAGdsilAZ8U/i2-kxl_HSPY10s8437iXSw/edit?utm_content=DAGdsilAZ8U&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton  

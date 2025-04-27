@@ -97,12 +97,12 @@ Some Sister Projects in regards to AI projects in TAP is the Artify project Exam
 
 Your repo doesn't have to have every section used below. This is just an example so you can get an idea of what your own repo should look like</i>
 
-## CS First Installation Walkthrough
+## Installation Walkthrough
 [Click here to view instructions](/documents/tutorial%20materials/CS%20FIRST/CS%20First%20Walkthrough.md)
 
 
-### Getting to the game 
-[Click here to view instructions](/documents/tutorial%20materials/Getting%20to%20the%20Game.md)
+### Getting to the website 
+[Click here to view the website](https://tap-ggc.github.io/AiDiva/index.html)
 
 
 ## Short Demo Instructions 

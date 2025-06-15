@@ -41,7 +41,8 @@ You can select from a range of audiences or a single auidience. Examples:
 * [Technology Ambassador Program](https://tapggc.org/) <b>(TAP)</b> is a project-based class that provides a collaborative environment for students to work with their fellow classmates on a semester-long project using technologies of their choice. TAP strives to increase participation in IT through numerous outreach activities and workshops that are designed to showcase the creative and fun side of technology.
 <!-- Commercial Video stored in the Media folder will be linked here -->
 
-[Commercial Video](https://youtu.be/mJm2OKTWRPc)
+<b>Commercial Video</b> Click on the image
+[<img align="center" src= "media/CommercialImg.PNG" width="" height="">](https://youtu.be/mJm2OKTWRPc)
 
 <!-- videos can also be dragged and dropped into markdown files if you want them embedded -->
 

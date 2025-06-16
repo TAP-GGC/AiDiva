@@ -107,12 +107,12 @@ Your repo doesn't have to have every section used below. This is just an example
 
 
 ## Short Demo Instructions 
-[<img align="center" src= "media/technology/Demo-PizzaHeist.PNG" width="" height="">](https://youtu.be/DXfXpEJkKxc)
+[<img align="center" src= "media/technology/CommercialImg.PNG" width="" height="">](https://youtu.be/DXfXpEJkKxc)
 
 
 ## Workshop Instructions
 
-[<img align="center" src= "media/technology/Demo-PizzaHeist.PNG" width="" height="">](https://youtu.be/O4iwbVIdOGc)
+[<img align="center" src= "media/technology/Workshop.PNG" width="" height="">](https://youtu.be/O4iwbVIdOGc)
 
 
 Conclusion: This final section will recap the lessons learned throughout the site. Users will be encouraged to take a short quiz or challenge to test their knowledge.

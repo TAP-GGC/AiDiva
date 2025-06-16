@@ -42,7 +42,7 @@ You can select from a range of audiences or a single auidience. Examples:
 <!-- Commercial Video stored in the Media folder will be linked here -->
 
 <b>Commercial Video</b> Click on the image
-[<img align="center" src= "media/CommercialImg.PNG" width="" height="">](https://youtu.be/mJm2OKTWRPc)
+[<img align="center" src= "media/CommercialImg.PNG" width="" height="">](https://youtu.be/XkTjLWIXTuc)
 
 <!-- videos can also be dragged and dropped into markdown files if you want them embedded -->
 
@@ -107,12 +107,12 @@ Your repo doesn't have to have every section used below. This is just an example
 
 
 ## Short Demo Instructions 
-[Demo Video on how to install and play our game](https://youtu.be/jhhDxP1rIns)
+[<img align="center" src= "media/technology/Demo-PizzaHeist.PNG" width="" height="">](https://youtu.be/DXfXpEJkKxc)
 
 
 ## Workshop Instructions
 
-[Our Game Workshop Video](https://youtu.be/Mtsre0iMStM)
+[<img align="center" src= "media/technology/Demo-PizzaHeist.PNG" width="" height="">](https://youtu.be/O4iwbVIdOGc)
 
 
 Conclusion: This final section will recap the lessons learned throughout the site. Users will be encouraged to take a short quiz or challenge to test their knowledge.

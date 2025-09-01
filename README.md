@@ -9,25 +9,25 @@
 <!-- the emojis are not set in stone! If you'd like you can remove them entirely or select your own from https://gist.github.com/rxaviers/7360908 you are welcome to -->
 
 ## :loudspeaker: About
-The objective of the workshop is to teach how to use chat bots correctly, ethically, and efficiently.
-<!-- You can look at other TAP projects if you need a better idea of how to describe your workshops objectives -->
+The objective of the workshop is to teach how to use chatbots correctly, ethically, and efficiently.
+<!-- You can look at other TAP projects if you need a better idea of how to describe your workshop's objectives -->
 
-This workshop has participants will learn how clear communication is key when interacting with chatbots and how unclear instructions can lead to mistakes. They will then apply these lessons in a hands-on PB&J sandwich-making activity to reinforce the concept. 
+This workshop will help participants learn how clear communication is key when interacting with chatbots and how unclear instructions can lead to mistakes. They will then apply these lessons in a hands-on PB&J sandwich-making activity to reinforce the concept. 
 
 ## :bulb: Project Information
 <!-- 
-Your Options for target audience: 
+Your Options for the target audience: 
   - High School
   - College
   - Middle School
   - K-12
   - Non-Stem
   - Undergraduate
-You can select from a range of audiences or a single auidience. Examples: 
+You can select from a range of audiences or a single audience. Examples: 
     Middle School - College 
     High School - College
     K-12
-  You will be presenting most often to your peers who are taking introductory technology classes, so more often than not you should be including college in your target audience range. 
+  You will be presenting most often to your peers taking introductory technology classes. 
 -->
 * <b>Difficulty Level:</b> Choose your workshop difficulty (Beginner/Intermediate/Advanced)
 * <b>Target Audience:</b> K12 - College (edit .md file to view all options presented in the markdown comments)
@@ -46,7 +46,7 @@ Click the image below to watch a 30 second commercial for the project <br> <br>
 ## :pencil2: Team: A.I. Diva
 
 <!-- Use the team photo of your choice once youve uploaded it to the team photo folder within the media folder -->
-<img alt="art featuring Rebecca, My, and Gabe" src = "media/event photos/37f5cca9-7e22-4d54-adc6-9c54cb6eca08.JPG " width="" height="300">
+<img alt="art featuring Rebecca, My, and Gabe" src = "media/event photos/37f5cca9-7e22-4d54-adc6-9c54cb6eca08.JPG " width="400" height="300">
 
 > (From left to right: Gabe, Rebecca, My.)
 <!-- replace with full names of your team members -->
@@ -62,7 +62,7 @@ Click the image below to watch a 30 second commercial for the project <br> <br>
 
 
 ## :page_with_curl: Project Description
-To create an interactive, engaging, and humorous chatbot experience that teaches users how to interact effectively with AI. The chatbot will have a sassy personality to keep things lighthearted while also demonstrating how important it is to communicate clearly with AI. The project will guide users through common pitfalls and challenges they may face when interacting with AI, playing a mini game as well trying to learn how to properly ask questions/prompts on figuring out the object the AI is thinking of, ultimately teaching them how to write precise and clear prompts throughout the whole workshop.
+To create an interactive, engaging, and humorous chatbot experience that teaches users how to interact effectively with AI. The chatbot will have a sassy personality to keep things lighthearted while also demonstrating how important it is to communicate clearly with AI. The project will guide users through common pitfalls and challenges they may face when interacting with AI, playing a mini game, as well trying to learn how to properly ask questions/prompts on figuring out the object the AI is thinking of, ultimately teaching them how to write precise and clear prompts throughout the whole workshop.
 
 Artificial Intelligence (AI) is rapidly transforming various industries, but its responsible use remains a key challenge. Our project, A.I. Diva, is an interactive, sassy chatbot designed to educate users on ethical AI usage, misinformation, and appropriate AI applications in the real world. Developed as a class project under the Technology Ambassador Program (TAP), A.I. Diva provides engaging, scenario-based learning experiences that teach users how to critically evaluate AI-generated content and design optimal prompts. Through hands-on workshops, we engage participants in real-world AI dilemmas where they interact with A.I. Diva, receive instant feedback, and refine their understanding of AI best practices. Preliminary results indicate a significant improvement in participants’ ability to identify AI-generated misinformation, understand ethical AI principles, and develop stronger AI literacy skills. Survey data and graphical analyses highlight measurable growth in participants’ critical thinking regarding AI interactions. As AI literacy becomes increasingly essential, A.I. Diva bridges the knowledge gap by making AI education engaging and accessible. With plans to expand this initiative through TAP’s outreach programs and educational collaborations, our chatbot serves as a stepping stone toward responsible AI adoption in academic and professional settings. 
 

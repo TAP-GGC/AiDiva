@@ -104,11 +104,14 @@ Your repo doesn't have to have every section used below. This is just an example
 
 
 ## Short Demo Instructions 
+
+Click the image below to watch a demo for the project
 [<img align="center" src= "media/technology/CommercialImg.PNG" width="" height="">](https://youtu.be/DXfXpEJkKxc)
 
 
 ## Workshop Instructions
 
+Click the image below to watch the workshop video for the project
 [<img align="center" src= "media/technology/Workshop.PNG" width="" height="">](https://youtu.be/O4iwbVIdOGc)
 
 

@@ -109,7 +109,7 @@ Click the image below to watch a demo for the project
 [<img align="center" src= "media/technology/CommercialImg.PNG" width="" height="">](https://youtu.be/DXfXpEJkKxc)
 
 
-## Workshop Instructions
+## Workshop Instructions <br>
 ![Workshop slides:](documents/workshop materials/Ai Diva Slides.pdf)
 
 Click the image below to watch the workshop video for the project

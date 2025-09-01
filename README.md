@@ -35,16 +35,13 @@ You can select from a range of audiences or a single auidience. Examples:
 * <b>Needed Materials:</b> Computer with keyboard
 * <b>Learning Outcomes:</b> The primary goal of this project is to teach participants how by the end of this interactive experience, participants will have developed a strong understanding of how to effectively interact with AI, especially in terms of crafting clear and specific prompts.
 * <b>Your Main Technology</b> Open Ai (Chat GPT API)
- 
-![image](https://github.com/user-attachments/assets/002f7a0a-7572-4d18-9a1f-251200bdc71a)
- 
 * [Technology Ambassador Program](https://tapggc.org/) <b>(TAP)</b> is a project-based class that provides a collaborative environment for students to work with their fellow classmates on a semester-long project using technologies of their choice. TAP strives to increase participation in IT through numerous outreach activities and workshops that are designed to showcase the creative and fun side of technology.
 <!-- Commercial Video stored in the Media folder will be linked here -->
+### Commercial Video 
+Click the image below to watch a 30 second commercial for the project <br> <br>
+[<img align="center" src= "media/CommercialImg.PNG" width="400" height="">](https://youtu.be/XkTjLWIXTuc)
 
-<b>Commercial Video</b> Click on the image
-[<img align="center" src= "media/CommercialImg.PNG" width="" height="">](https://youtu.be/XkTjLWIXTuc)
 
-<!-- videos can also be dragged and dropped into markdown files if you want them embedded -->
 
 ## :pencil2: Team: A.I. Diva
 

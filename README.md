@@ -110,6 +110,7 @@ Click the image below to watch a demo for the project
 
 
 ## Workshop Instructions
+![Workshop slides:](documents/workshop materials/Ai Diva Slides.pdf)
 
 Click the image below to watch the workshop video for the project
 [<img align="center" src= "media/technology/Workshop.PNG" width="" height="">](https://youtu.be/O4iwbVIdOGc)
